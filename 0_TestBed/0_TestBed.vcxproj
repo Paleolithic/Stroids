@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ECA9D8B3-C333-4453-8FBD-E36E034B4D3B}</ProjectGuid>
     <RootNamespace>0_TestBed</RootNamespace>
-    <ProjectName>Octree start</ProjectName>
+    <ProjectName>Stroids</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
