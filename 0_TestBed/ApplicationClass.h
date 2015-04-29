@@ -4,6 +4,7 @@ Date: 2014/10
 */
 #ifndef __APPLICATION_H_
 #define __APPLICATION_H_
+#define USINGLERP
 #pragma warning(disable:4251)
 
 #include "ME\MyEngine.h"
@@ -19,6 +20,8 @@ class ApplicationClass
 
 	String m_sSelectedObject;//Selected Object
 	matrix4 m_m4SelectedObject;//Creeper Model Matrix
+	matrix4 m_m4ObjectOrientation;//Model Matrix
+	matrix4 m_m4ObjectTranslation;
 
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class
