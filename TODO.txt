@@ -1,0 +1,7 @@
+TODO:
+
+Fix timing functions to reduce overlap
+Fix random y Position to be better (currently not actually based on window height)
+Remove m_m4SelectedObject and m_sSelectedObject connections
+Double check repeated code
+General refactoring
