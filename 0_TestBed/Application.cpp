@@ -99,36 +99,36 @@ void ApplicationClass::Update (void)
 	// Jared's shit
 
 	//Top-Right corner
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,0))* glm::scale(vector3(width/2, height/2, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 10)), MERED, WIRE);
 	//Cubes inside top right
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, height/8,0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, (half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height/4),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
 
 	//Top-Left corner
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,0))* glm::scale(vector3(width/2, height/2, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 10)), MERED, WIRE);
 	//Cubes inside top left
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, height/8,0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, (half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height/4),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
 
 	//Bottom-Right corner
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,0))* glm::scale(vector3(width/2, height/2, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 10)), MERED, WIRE);
 	//Cubes inside bottom right
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -height/8,0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -(half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height/4),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
 
 	//Bottom-Left corner
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,0))* glm::scale(vector3(width/2, height/2, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 10)), MERED, WIRE);
 	//Cubes inside bottom left
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -height/8,0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -(half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height-(half_height/4)),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height/4),0))* glm::scale(vector3(width/4, height/4, 0)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
 
 
 	printf("FPS: %d\r", m_pSystem->FPS);//print the Frames per Second	
