@@ -11,7 +11,7 @@ void ApplicationClass::InitUserAppVariables()
 	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Pig.obj", "Pig");
 
 	srand (time(NULL));
-	for (int nCreepers = 0; nCreepers  < 2; nCreepers ++)
+	for (int nCreeper = 0; nCreeper < numAsteroids; nCreeper++)
 	{
 		float yPos = rand() % 3 + -3;
 		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(-3.0f, yPos, 0.0f)));
@@ -25,12 +25,14 @@ void ApplicationClass::Update (void)
 	// TODO: REWRITE
 	m_pSystem->UpdateTime();//Update the system
 	m_pMeshMngr->Update(); //Update the mesh information
-	float fTimeSpan = m_pSystem->LapClock();
+
+	//Variable for run time reset 
 	static float fRunTime = 0.0f;
-	fRunTime += fTimeSpan;
+	//Variable for translate matrix
 	static float fTotalTime = 0.0f;
 	float fLapDifference = m_pSystem->StopClock();
 	fTotalTime += fLapDifference;
+	fRunTime += fLapDifference;
 
 	// Steve and Pig Bounding Object Classes
 	BoundingObjectClass* steveObj = m_pMeshMngr->GetBoundingObject("Steve");
@@ -47,7 +49,7 @@ void ApplicationClass::Update (void)
 	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
 	
 	// Set Pig Model Matrix
-	m_pMeshMngr->SetModelMatrix(m_m4SelectedObject, m_sSelectedObject);
+	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sSelectedObject);
 	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Pig");
 	
 	//First person camera movement
@@ -56,7 +58,7 @@ void ApplicationClass::Update (void)
 
 	if(m_bArcBall == true)
 	{
-		ArcBall();
+		//ArcBall();
 	}
 
 	// CATHY SHIT
@@ -87,11 +89,10 @@ void ApplicationClass::Update (void)
 		v3Lerp.x = MapValue(ScreenPercent, 0.0f, 1.0f, -half_width, half_width);
 		v3Lerp.y = tempBOCentroid.y;
 		v3Lerp.z = 0.0f;
-		//m_m4ObjectOrientation = glm::translate(v3Lerp);
+		//m_m4ShipOrientation = glm::translate(v3Lerp);
 		#endif  USINGLERP 
 	
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
-		//m_pMeshMngr->AddAxisToQueue(m_m4ObjectTranslation * m_m4ObjectOrientation * glm::scale(vector3(3.0f)));
 
 		m_pMeshMngr->AddInstanceToRenderList("ALL");
 	}

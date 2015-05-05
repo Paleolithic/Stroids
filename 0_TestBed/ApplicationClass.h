@@ -19,9 +19,12 @@ class ApplicationClass
 	bool m_bArcBall;// Arcball flag
 
 	String m_sSelectedObject;//Selected Object
-	matrix4 m_m4SelectedObject;//Creeper Model Matrix
-	matrix4 m_m4ObjectOrientation;//Model Matrix
-	matrix4 m_m4ObjectTranslation;
+	matrix4 m_m4ShipObject;//Creeper Model Matrix
+	matrix4 m_m4ShipOrientation;//Model Matrix
+	matrix4 m_m4ShipTranslation;
+
+	// Number of asteroids
+	static const int numAsteroids = 4;
 
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class

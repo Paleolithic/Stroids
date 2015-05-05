@@ -4,7 +4,7 @@ void ApplicationClass::ProcessKeyboard(void)
 	bool bModifier = false;
 	float fSpeed = 0.1f;
 
-	m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
@@ -63,62 +63,62 @@ void ApplicationClass::ProcessKeyboard(void)
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		if(bModifier)
-			m_m4SelectedObject = glm::rotate(m_m4SelectedObject, 1.0f, vector3(0.0f, 0.0f, 1.0f));
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f, 1.0f));
 		else
-			m_m4SelectedObject = glm::translate(matrix4(), vector3(-fSpeed, 0.0f, 0.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3(-fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		if(bModifier)
-			m_m4SelectedObject = glm::rotate(m_m4SelectedObject, 1.0f, vector3(0.0f, 0.0f,-1.0f));
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f,-1.0f));
 		else
-			m_m4SelectedObject = glm::translate(matrix4(), vector3( fSpeed, 0.0f, 0.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3( fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		if(bModifier)
-			m_m4SelectedObject = glm::translate(matrix4(), vector3(0.0f, 0.0f, fSpeed - 1.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f, fSpeed - 1.0f)) * m_m4ShipObject;
 		else
-			m_m4SelectedObject = glm::translate(matrix4(), vector3(0.0f, fSpeed, 0.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, fSpeed, 0.0f)) * m_m4ShipObject;
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		if(bModifier)
-			m_m4SelectedObject = glm::translate(matrix4(), vector3(0.0f, 0.0f,-fSpeed + 1.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f,-fSpeed + 1.0f)) * m_m4ShipObject;
 			
 		else
-			m_m4SelectedObject = glm::translate(matrix4(), vector3(0.0f,-fSpeed, 0.0f)) * m_m4SelectedObject;
+			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f,-fSpeed, 0.0f)) * m_m4ShipObject;
 	}
 #pragma endregion
 	//ModelSelection
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
 	{
 		m_sSelectedObject = "Cow";
-		m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
 	{
 		m_sSelectedObject = "Zombie";
-		m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 	}
 	
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F3))
 	{
 		m_sSelectedObject = "Creeper";
-		m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F4))
 	{
 		m_sSelectedObject = "Steve";
-		m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F5))
 	{
 		m_sSelectedObject = "Pig";
-		m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 	}
 
 	//Camera
@@ -169,7 +169,7 @@ void ApplicationClass::ProcessMouse(void)
 			{
 				m_pMeshMngr->SetVisibleBoundingObject(true, sInstance);
 				m_sSelectedObject = sInstance;
-				m_m4SelectedObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+				m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
 				m_pMeshMngr->SetVisibleBoundingObjectHierarchy(true, m_sSelectedObject);
 			}
 		}
@@ -323,5 +323,5 @@ void ApplicationClass::ArcBall(float a_fSensitivity)
 		DeltaMouse = static_cast<float>(MouseY - CenterY);
 		arcball = glm::rotate(arcball, -a_fSensitivity * DeltaMouse, vector3(1.0f, 0.0f, 0.0f));
 	}
-	m_m4SelectedObject = arcball;
+	m_m4ShipObject = arcball;
 }
