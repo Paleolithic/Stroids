@@ -18,7 +18,7 @@ class ApplicationClass
 	bool m_bFPC;// First Person Camera flag
 	bool m_bArcBall;// Arcball flag
 
-	String m_sSelectedObject;//Selected Object
+	String m_sShipObject;//Selected Object
 	matrix4 m_m4ShipObject;//Creeper Model Matrix
 	matrix4 m_m4ShipOrientation;//Model Matrix
 	matrix4 m_m4ShipTranslation;

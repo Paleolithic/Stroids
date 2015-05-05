@@ -4,7 +4,7 @@ void ApplicationClass::ProcessKeyboard(void)
 	bool bModifier = false;
 	float fSpeed = 0.1f;
 
-	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
+	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
@@ -90,36 +90,36 @@ void ApplicationClass::ProcessKeyboard(void)
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f,-fSpeed, 0.0f)) * m_m4ShipObject;
 	}
 #pragma endregion
-	//ModelSelection
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
-	{
-		m_sSelectedObject = "Cow";
-		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-	}
+	////ModelSelection
+	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
+	//{
+	//	m_sShipObject = "Cow";
+	//	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	//}
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
-	{
-		m_sSelectedObject = "Zombie";
-		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-	}
-	
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F3))
-	{
-		m_sSelectedObject = "Creeper";
-		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-	}
+	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
+	//{
+	//	m_sShipObject = "Zombie";
+	//	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	//}
+	//
+	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F3))
+	//{
+	//	m_sShipObject = "Creeper";
+	//	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	//}
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F4))
-	{
-		m_sSelectedObject = "Steve";
-		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-	}
+	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F4))
+	//{
+	//	m_sShipObject = "Steve";
+	//	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	//}
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F5))
-	{
-		m_sSelectedObject = "Pig";
-		m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-	}
+	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F5))
+	//{
+	//	m_sShipObject = "Pig";
+	//	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	//}
 
 	//Camera
 #pragma region Camera
@@ -148,7 +148,7 @@ void ApplicationClass::ProcessMouse(void)
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 		m_bFPC = true;
 
-	static bool bLeft_Released = false;
+	/*static bool bLeft_Released = false;
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		bLeft_Released = true;
@@ -168,13 +168,13 @@ void ApplicationClass::ProcessMouse(void)
 			if(sInstance != "")
 			{
 				m_pMeshMngr->SetVisibleBoundingObject(true, sInstance);
-				m_sSelectedObject = sInstance;
-				m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sSelectedObject);
-				m_pMeshMngr->SetVisibleBoundingObjectHierarchy(true, m_sSelectedObject);
+				m_sShipObject = sInstance;
+				m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+				m_pMeshMngr->SetVisibleBoundingObjectHierarchy(true, m_sShipObject);
 			}
 		}
 		bLeft_Released = false;
-	}
+	}*/
 }
 void ApplicationClass::ProcessJoystick(void)
 {

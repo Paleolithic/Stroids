@@ -11,11 +11,11 @@ void ApplicationClass::InitUserAppVariables()
 	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Pig.obj", "Pig");
 
 	srand (time(NULL));
-	for (int nCreeper = 0; nCreeper < numAsteroids; nCreeper++)
+	for (int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++)
 	{
 		float yPos = rand() % 3 + -3;
 		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(-3.0f, yPos, 0.0f)));
-		m_sSelectedObject = "Steve";
+		m_sShipObject = "Steve";
 	}
 
 }
@@ -49,7 +49,7 @@ void ApplicationClass::Update (void)
 	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
 	
 	// Set Pig Model Matrix
-	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sSelectedObject);
+	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
 	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Pig");
 	
 	//First person camera movement
@@ -76,10 +76,10 @@ void ApplicationClass::Update (void)
 	float half_height = height/2;
 	float half_width  = width/2;
 
-	for(int creepernum = 0; creepernum < 2; creepernum++)
+	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++)
 	{
 		vector3 tempBOCentroid = vector3(0.0f, 0.0f, 0.0f);
-		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(creepernum+2);
+		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
 		tempBOCentroid.y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 		std::cout << tempBOCentroid.y << std::endl;
