@@ -92,11 +92,11 @@ void ApplicationClass::ProcessKeyboard(void)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 		//Go Counter-clockwise
-		clockwise = false;
+		degreeSpin++;
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
 		//Go Clockwise
-		clockwise = true;
+		degreeSpin--;
 	}
 #pragma endregion
 	////ModelSelection

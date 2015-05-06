@@ -28,7 +28,22 @@ class ApplicationClass
 
 	// Number of asteroids
 	int numAsteroids;
-	bool clockwise;
+	int maxAsteroids; 
+
+	// Shield spin amount
+	float degreeSpin;
+
+	// Custom height and width variables
+	float width;
+	float height;
+	float half_w;
+	float half_h;
+
+	// Asteroid array
+	BoundingObjectClass* m_pAsteroids;
+	std::vector<vector3> lerp_vectors;
+	std::vector<float> asteroid_lt;
+	std::vector<float> asteroid_sp;
 
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class

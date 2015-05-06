@@ -13,19 +13,20 @@ void ApplicationClass::InitUserAppVariables()
 	bool clockwise = true;
 
 	srand (time(NULL));	 
+
+	/*float xPos = rand() % (int)(width) + (int)(-width);
+	float yPos = rand() % (int)(height) + (int)(-height/2);
+	numAsteroids++;
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + numAsteroids, glm::translate(vector3(xPos, yPos, 0.0f)));*/
 }
 
 void ApplicationClass::Update (void)
 {
 	srand (time(NULL));
 	// Time stuff 
-	// TODO: REWRITE
 	m_pSystem->UpdateTime();//Update the system
 	m_pMeshMngr->Update(); //Update the mesh information
 
-	float width = MapValue((float)m_pSystem->GetWindowWidth(), 0.0f, 1280.0f, 0.0f, 22.5f);
-	float height = MapValue((float)m_pSystem->GetWindowHeight(), 0.0f, 720.0f, 0.0f, (22.5f/1.8f));
-	
 	float half_height = height/2;
 	float half_width  = width/2;
 
@@ -47,18 +48,9 @@ void ApplicationClass::Update (void)
 
 	// Pig translate matrixes
 	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
-	matrix4 sRotate;
-	matrix4 sOrbit;
-	if(clockwise)
-	{
-		sRotate = glm::rotate(matrix4(IDENTITY), fTotalTime * 15, vector3(0.0f, 0.0f, 1.0f));
-		sOrbit = glm::rotate(matrix4(IDENTITY), -fTotalTime * 15, vector3(0.0f, 0.0f, 1.0f));
-	}
-	else{
-		sRotate = glm::rotate(matrix4(IDENTITY), -fTotalTime * 15, vector3(0.0f, 0.0f, 1.0f));
-		sOrbit = glm::rotate(matrix4(IDENTITY), fTotalTime * 15, vector3(0.0f, 0.0f, 1.0f));
-	}
-
+	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
+	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
+	
 	// Pig combined translate matrix
 	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
 	
@@ -76,62 +68,66 @@ void ApplicationClass::Update (void)
 	}
 
 	// CATHY SHIT
-	/*float ScreenLength = rand() % (int)width + 1;
-	if(fRunTime > ScreenLength)
+	// Do the following every two seconds as long as number of asteroids is less than max
+	if(stroidTime > 2.0f && numAsteroids < maxAsteroids)
 	{
-		fRunTime = 0.0f; //Resets run time
-	}
-
-	float ScreenPercent = MapValue(fRunTime, 0.0f, ScreenLength, 0.0f, 1.0f);*/
-
-	
-	if(stroidTime > 2.0f)
-	{
+		//Set initial random x and y position for asteroids
 		float xPos = rand() % (int)(width) + (int)(-width);
 		float yPos = rand() % (int)(height) + (int)(-half_height);
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(xPos, yPos, 0.0f)));
+
+		//Add to number of asteroids
+		numAsteroids++;
+
+		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + numAsteroids, glm::translate(vector3(xPos, yPos, 0.0f)));
+		asteroid_lt.push_back(0.0f);
+		asteroid_sp.push_back(0.0f);		
+		
+		//Reset timer
 		stroidTime = 0.0f;
 	}
 
-
 	vector3 color = MERED;
-	int stroidCount = m_pMeshMngr->GetNumberOfInstances();
+	float ScreenLength = 3.0f;
 
-	for(int nAsteroid = 2; nAsteroid < stroidCount; nAsteroid++)
-	{
-		float ScreenLength = rand() % (int)width + 1;
-		if(fRunTime > ScreenLength)
+	//For each asteroid
+	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++){
+
+		//Add to current asteroids lifetime value
+		asteroid_lt[nAsteroid] += fLapDifference;
+		
+		// If current asteroids lifetime is greater than screen length, reset
+		if(asteroid_lt[nAsteroid] > ScreenLength)
 		{
-			fRunTime = 0.0f; //Resets run time
+			asteroid_lt[nAsteroid] = 0.0f; //Resets run time
 		}
-		float ScreenPercent = MapValue(fRunTime, 0.0f, ScreenLength, 0.0f, 1.0f);
 
-		vector3 tempBOCentroid = vector3(0.0f, 0.0f, 0.0f);
-		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid);
+		// Map current asteroids screen percent to its lifetime
+		asteroid_sp[nAsteroid] = MapValue(asteroid_lt[nAsteroid], 0.0f, ScreenLength, 0.0f, 1.0f);
+		std::cout << asteroid_sp[nAsteroid] << std::endl;
+
+		// Get current asteroids bounding object class and see if it's colliding with the shield
+		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
 		BoundingObjectClass* shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
 		if(shieldObject->IsColliding(*tempBO))
 		{
 			color = MEBLACK;
-
-			numAsteroids--;
-			tempBO->SetVisible(false);
-			//delete tempBO;
+			//numAsteroids--;
+			//tempBO->SetVisible(false);
 		}
 		else{
 			color = MERED;
 		}
-
-		tempBOCentroid.y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
-		std::cout << tempBOCentroid.y << std::endl;
 		
 		vector3 v3Lerp;
-		v3Lerp.x = MapValue(ScreenPercent, 0.0f, 1.0f, -half_width, half_width);
-		v3Lerp.y = tempBOCentroid.y;
+		// Map the lerp vectors x value with the current asteroids screen percentage
+		v3Lerp.x = MapValue(asteroid_sp[nAsteroid], 0.0f, 1.0f, -half_width, half_width);
+		v3Lerp.y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 		v3Lerp.z = 0.0f;
-	
+		
+		// Send the mesh manager the current asteroids lerp vector position
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
-			
 	}
 
 	// Jared's shit

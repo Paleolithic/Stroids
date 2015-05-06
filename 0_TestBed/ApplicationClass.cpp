@@ -67,8 +67,19 @@ ApplicationClass::ApplicationClass()
 	m_pWindow = nullptr;
 	m_pGLSystem = nullptr;
 	m_pLightMngr = nullptr;
+	m_pAsteroids = nullptr;
 
-	numAsteroids = 1;
+
+	// Num asteroids init
+	numAsteroids = 0;
+	maxAsteroids = 5;
+
+	// Shield degree spin init
+	degreeSpin = 0;
+
+	// Width and height variable inits
+	width = 22.5f;
+	height = width / 1.8f;
 }
 ApplicationClass::ApplicationClass(ApplicationClass const& other){}
 ApplicationClass& ApplicationClass::operator=(ApplicationClass const& other){	return *this; }
