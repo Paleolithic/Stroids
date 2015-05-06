@@ -5,6 +5,7 @@ void ApplicationClass::ProcessKeyboard(void)
 	float fSpeed = 0.1f;
 
 	m_m4ShipObject = m_pMeshMngr->GetModelMatrix(m_sShipObject);
+	m_m4ShieldObject = m_pMeshMngr->GetModelMatrix(m_sShieldObject);
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
@@ -60,34 +61,42 @@ void ApplicationClass::ProcessKeyboard(void)
 
 	//Model Positioning
 #pragma region Model Positioning
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
 		if(bModifier)
 			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f, 1.0f));
 		else
 			m_m4ShipObject = glm::translate(matrix4(), vector3(-fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		if(bModifier)
 			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f,-1.0f));
 		else
 			m_m4ShipObject = glm::translate(matrix4(), vector3( fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		if(bModifier)
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f, fSpeed - 1.0f)) * m_m4ShipObject;
 		else
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, fSpeed, 0.0f)) * m_m4ShipObject;
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
 		if(bModifier)
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f,-fSpeed + 1.0f)) * m_m4ShipObject;
 			
 		else
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f,-fSpeed, 0.0f)) * m_m4ShipObject;
+	}
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
+		//Go Counter-clockwise
+		clockwise = false;
+	}
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
+		//Go Clockwise
+		clockwise = true;
 	}
 #pragma endregion
 	////ModelSelection
@@ -123,16 +132,16 @@ void ApplicationClass::ProcessKeyboard(void)
 
 	//Camera
 #pragma region Camera
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		m_pCamera->MoveForward(fSpeed);
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		m_pCamera->MoveForward(-fSpeed);
 	
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		m_pCamera->MoveSideways(-fSpeed);
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		m_pCamera->MoveSideways(fSpeed);
 	m_pCamera->CalculateView();
 #pragma endregion

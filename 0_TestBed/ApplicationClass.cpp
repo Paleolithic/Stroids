@@ -67,6 +67,8 @@ ApplicationClass::ApplicationClass()
 	m_pWindow = nullptr;
 	m_pGLSystem = nullptr;
 	m_pLightMngr = nullptr;
+
+	numAsteroids = 1;
 }
 ApplicationClass::ApplicationClass(ApplicationClass const& other){}
 ApplicationClass& ApplicationClass::operator=(ApplicationClass const& other){	return *this; }

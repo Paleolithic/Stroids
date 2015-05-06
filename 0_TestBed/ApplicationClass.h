@@ -18,13 +18,17 @@ class ApplicationClass
 	bool m_bFPC;// First Person Camera flag
 	bool m_bArcBall;// Arcball flag
 
-	String m_sShipObject;//Selected Object
-	matrix4 m_m4ShipObject;//Creeper Model Matrix
+	String m_sShipObject;//Ship Object String
+	matrix4 m_m4ShipObject;//Ship Model Matrix
 	matrix4 m_m4ShipOrientation;//Model Matrix
 	matrix4 m_m4ShipTranslation;
 
+	String m_sShieldObject;//Shield Object String
+	matrix4 m_m4ShieldObject;//Shield Model Matrix
+
 	// Number of asteroids
-	static const int numAsteroids = 4;
+	int numAsteroids;
+	bool clockwise;
 
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class
@@ -174,5 +178,11 @@ private:
 		Writes the configuration of the application to a file
 	*/
 	void WriteConfig(void);
+
+	/*
+	OctTree detection
+	*/
+	vector3 OctDectection(/*BoundingObjectClass* dude*/);
+
 };
 #endif //__APPLICATION_H_
