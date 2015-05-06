@@ -16,6 +16,8 @@ class MyEngineDLL BoundingObjectClass
 
 	float m_fRadius;		//Radius of the BS
 
+	//int stroidCount;
+
 	PrimitiveManagerSingleton* m_pPrimitiveMngr;
 
 	String m_sInstance;		//The name of the instance related to this box
