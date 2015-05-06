@@ -1,4 +1,5 @@
 #include "ApplicationClass.h"
+#include "Asteroid.h"
 void ApplicationClass::InitUserAppVariables()
 {
 	m_pCamera->SetPosition(vector3(0.0f, 0.0f, 15.0f));
@@ -40,6 +41,10 @@ void ApplicationClass::Update (void)
 	fRunTime += fLapDifference;
 	stroidTime += fLapDifference;
 
+	if(fTotalTime >= 60.0f){
+		maxAsteroids = 10;
+	}
+
 	// Steve and Pig Bounding Object Classes
 	BoundingObjectClass* steveObj = m_pMeshMngr->GetBoundingObject("Steve");
 	BoundingObjectClass* pigObj = m_pMeshMngr->GetBoundingObject("Pig");
@@ -71,59 +76,78 @@ void ApplicationClass::Update (void)
 	// Do the following every two seconds as long as number of asteroids is less than max
 	if(stroidTime > 2.0f && numAsteroids < maxAsteroids)
 	{
+		
 		//Set initial random x and y position for asteroids
 		float xPos = rand() % (int)(width) + (int)(-width);
 		float yPos = rand() % (int)(height) + (int)(-half_height);
+		vector3 pos = vector3(xPos, yPos, 0.0f);
 
 		//Add to number of asteroids
 		numAsteroids++;
 
+		float speed = rand() % 5 + 3;
+		float direction = rand() % 2;
+		asteroids.push_back(Asteroid(pos, speed, direction));
+	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + numAsteroids, glm::translate(vector3(xPos, yPos, 0.0f)));
-		asteroid_lt.push_back(0.0f);
-		asteroid_sp.push_back(0.0f);		
-		
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
+		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
+
 		//Reset timer
 		stroidTime = 0.0f;
 	}
 
-	vector3 color = MERED;
-	float ScreenLength = 3.0f;
 
+	vector3 color = MERED;
+	float ScreenLength = 1.0f;
 	//For each asteroid
 	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++){
-
 		//Add to current asteroids lifetime value
-		asteroid_lt[nAsteroid] += fLapDifference;
-		
+		asteroids[nAsteroid].life_time += fLapDifference;
+
 		// If current asteroids lifetime is greater than screen length, reset
-		if(asteroid_lt[nAsteroid] > ScreenLength)
+		if(asteroids[nAsteroid].GetLT() > asteroids[nAsteroid].speed)
 		{
-			asteroid_lt[nAsteroid] = 0.0f; //Resets run time
+			asteroids[nAsteroid].life_time = 0.0f; //Resets run time
 		}
 
 		// Map current asteroids screen percent to its lifetime
-		asteroid_sp[nAsteroid] = MapValue(asteroid_lt[nAsteroid], 0.0f, ScreenLength, 0.0f, 1.0f);
-		std::cout << asteroid_sp[nAsteroid] << std::endl;
+		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
 
 		// Get current asteroids bounding object class and see if it's colliding with the shield
 		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
+		//std::cout << tempName << std::endl;
+
+		
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
 		BoundingObjectClass* shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
+
+		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 		if(shieldObject->IsColliding(*tempBO))
 		{
 			color = MEBLACK;
+			std::cout << "Colliding with: "<< tempName << std::endl;
+			asteroids[nAsteroid].life_time = 0.0f;
+			asteroids[nAsteroid].screen_percentage = 0.0f;
+
+			float speed = rand() % 5 + 3;
+			float direction = rand() % 2;
+			asteroids[nAsteroid].speed = speed;
+			asteroids[nAsteroid].go_right = direction;
+
+			randomY = rand() % (int)(height) + (int)(-half_height);
 			//numAsteroids--;
 			//tempBO->SetVisible(false);
-		}
-		else{
-			color = MERED;
 		}
 		
 		vector3 v3Lerp;
 		// Map the lerp vectors x value with the current asteroids screen percentage
-		v3Lerp.x = MapValue(asteroid_sp[nAsteroid], 0.0f, 1.0f, -half_width, half_width);
-		v3Lerp.y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
+		if(asteroids[nAsteroid].go_right){
+			v3Lerp.x = MapValue(asteroids[nAsteroid].screen_percentage, 0.0f, 1.0f, -half_width, half_width);
+		} else{
+			v3Lerp.x = MapValue(asteroids[nAsteroid].screen_percentage, 0.0f, 1.0f, half_width, -half_width);
+		}
+		v3Lerp.y = randomY;
 		v3Lerp.z = 0.0f;
 		
 		// Send the mesh manager the current asteroids lerp vector position
