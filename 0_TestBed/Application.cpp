@@ -11,28 +11,38 @@ void ApplicationClass::InitUserAppVariables()
 	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Pig.obj", "Pig");
 
 	srand (time(NULL));
+
 	for (int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++)
 	{
-		float yPos = rand() % 3 + -3;
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(-3.0f, yPos, 0.0f)));
+		/*float yPos = rand() % (int)(height) + (int)(-half_height);
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(half_width, yPos, 0.0f)));*/
 		m_sShipObject = "Steve";
 	}
-
+	 
 }
 void ApplicationClass::Update (void)
 {
+	srand (time(NULL));
 	// Time stuff 
 	// TODO: REWRITE
 	m_pSystem->UpdateTime();//Update the system
 	m_pMeshMngr->Update(); //Update the mesh information
 
+	float width = MapValue((float)m_pSystem->GetWindowWidth(), 0.0f, 1280.0f, 0.0f, 22.5f);
+	float height = MapValue((float)m_pSystem->GetWindowHeight(), 0.0f, 720.0f, 0.0f, (22.5f/1.8f));
+	
+	float half_height = height/2;
+	float half_width  = width/2;
+
 	//Variable for run time reset 
 	static float fRunTime = 0.0f;
 	//Variable for translate matrix
 	static float fTotalTime = 0.0f;
+	static float stroidTime = 0.0f;
 	float fLapDifference = m_pSystem->StopClock();
 	fTotalTime += fLapDifference;
 	fRunTime += fLapDifference;
+	stroidTime += fLapDifference;
 
 	// Steve and Pig Bounding Object Classes
 	BoundingObjectClass* steveObj = m_pMeshMngr->GetBoundingObject("Steve");
@@ -57,39 +67,51 @@ void ApplicationClass::Update (void)
 		CameraRotation();
 
 	if(m_bArcBall == true)
-	{
+	{ 
 		//ArcBall();
 	}
 
 	// CATHY SHIT
-	float ScreenLength = 3.0f;
+	/*float ScreenLength = rand() % (int)width + 1;
 	if(fRunTime > ScreenLength)
 	{
 		fRunTime = 0.0f; //Resets run time
 	}
-	float ScreenPercent = MapValue(fRunTime, 0.0f, ScreenLength, 0.0f, 1.0f);
+
+	float ScreenPercent = MapValue(fRunTime, 0.0f, ScreenLength, 0.0f, 1.0f);*/
 
 	
-	float width = MapValue((float)m_pSystem->GetWindowWidth(), 0.0f, 1280.0f, 0.0f, 22.5f);
-	float height = MapValue((float)m_pSystem->GetWindowHeight(), 0.0f, 720.0f, 0.0f, (22.5f/1.8f));
-	
-	float half_height = height/2;
-	float half_width  = width/2;
-
-	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++)
+	if(stroidTime > 2.0f)
 	{
+		float xPos = rand() % (int)(width) + (int)(-width);
+		float yPos = rand() % (int)(height) + (int)(-half_height);
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper", glm::translate(vector3(xPos, yPos, 0.0f)));
+		stroidTime = 0.0f;
+	}
+
+
+	int stroidCount = m_pMeshMngr->GetNumberOfInstances();
+
+	for(int nAsteroid = 2; nAsteroid < stroidCount; nAsteroid++)
+	{
+		float ScreenLength = rand() % (int)width + 1;
+		if(fRunTime > ScreenLength)
+		{
+			fRunTime = 0.0f; //Resets run time
+		}
+		float ScreenPercent = MapValue(fRunTime, 0.0f, ScreenLength, 0.0f, 1.0f);
+
 		vector3 tempBOCentroid = vector3(0.0f, 0.0f, 0.0f);
-		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
+		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid);
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
 		tempBOCentroid.y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 		std::cout << tempBOCentroid.y << std::endl;
-
+		
 		#ifdef USINGLERP
 		vector3 v3Lerp;
 		v3Lerp.x = MapValue(ScreenPercent, 0.0f, 1.0f, -half_width, half_width);
 		v3Lerp.y = tempBOCentroid.y;
 		v3Lerp.z = 0.0f;
-		//m_m4ShipOrientation = glm::translate(v3Lerp);
 		#endif  USINGLERP 
 	
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
@@ -98,7 +120,7 @@ void ApplicationClass::Update (void)
 	}
 	
 	// Jared's shit
-
+	//OCTREE
 	//Top-Right corner
 	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 10)), MERED, WIRE);
 	//Cubes inside top right
@@ -134,4 +156,3 @@ void ApplicationClass::Update (void)
 
 	printf("FPS: %d\r", m_pSystem->FPS);//print the Frames per Second	
 }
-
