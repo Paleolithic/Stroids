@@ -7,6 +7,7 @@ Asteroid::Asteroid(void)
 	screen_percentage = 0.0f;
 	speed = 1.0f;
 	go_right = true;
+	colliding = false;
 }
 
 Asteroid::Asteroid(vector3 position, float spd, bool right)
@@ -16,6 +17,7 @@ Asteroid::Asteroid(vector3 position, float spd, bool right)
 	screen_percentage = 0.0f;
 	speed = spd;
 	go_right = right;
+	colliding = false;
 }
 
 

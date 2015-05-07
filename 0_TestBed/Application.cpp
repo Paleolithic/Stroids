@@ -15,6 +15,10 @@ void ApplicationClass::InitUserAppVariables()
 
 	srand (time(NULL));	 
 
+	// Steve and Pig Bounding Object Classes
+	shipObject = m_pMeshMngr->GetBoundingObject("Steve");
+	shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
+
 	/*float xPos = rand() % (int)(width) + (int)(-width);
 	float yPos = rand() % (int)(height) + (int)(-height/2);
 	numAsteroids++;
@@ -45,11 +49,9 @@ void ApplicationClass::Update (void)
 		maxAsteroids = 10;
 	}
 
-	// Steve and Pig Bounding Object Classes
-	BoundingObjectClass* steveObj = m_pMeshMngr->GetBoundingObject("Steve");
-	BoundingObjectClass* pigObj = m_pMeshMngr->GetBoundingObject("Pig");
-	vector3 pigPos = steveObj->GetCentroidGlobal();
-	pigPos.y = pigPos.y - steveObj->GetHalfWidth().y;
+	
+	vector3 pigPos = shipObject->GetCentroidGlobal();
+	pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
 
 	// Pig translate matrixes
 	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
@@ -97,36 +99,78 @@ void ApplicationClass::Update (void)
 		stroidTime = 0.0f;
 	}
 
-
+	//Init local variables
 	vector3 color = MERED;
 	float ScreenLength = 1.0f;
+
 	//For each asteroid
 	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++){
-		//Add to current asteroids lifetime value
-		asteroids[nAsteroid].life_time += fLapDifference;
+		/*
+			Initialization for this loops variables
+		*/
+		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
+		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
+		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 
-		// If current asteroids lifetime is greater than screen length, reset
+		/*
+			Logic to handle asteroid map value for screen movement
+			Add to current asteroids lifetime value based on fLapDifference
+			If current asteroids lifetime is greater than screen length, reset lifetime and allow for it to collide again
+			Then map current asteroids screen percent to its lifetime
+		*/
+		asteroids[nAsteroid].life_time += fLapDifference;
 		if(asteroids[nAsteroid].GetLT() > asteroids[nAsteroid].speed)
 		{
 			asteroids[nAsteroid].life_time = 0.0f; //Resets run time
+			asteroids[nAsteroid].colliding = false;
 		}
-
-		// Map current asteroids screen percent to its lifetime
 		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
 
-		// Get current asteroids bounding object class and see if it's colliding with the shield
-		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
-		//std::cout << tempName << std::endl;
+		/*
+			Logic to handle ship collision with asteroid
+			Checks for collision with current asteroid
+			Updates color based on ship's health
+		*/
+		if(shipObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding){
+			asteroids[nAsteroid].colliding = true;
+			shipHealth--;
+		}
 
-		
-		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
-		BoundingObjectClass* shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
+		switch(shipHealth){
+		case 2:
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Inverse");
+			break;
+		case 1:
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "GrayScale");
+			break;
+		case 0:
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Color");
+			break;
+		}
 
-		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
+		// Make asteroid blink right after colliding
+		// TODO: Rework
+		if(asteroids[nAsteroid].colliding){
+			if((int)asteroids[nAsteroid].life_time % 2 == 0){
+				m_pMeshMngr->SetShaderProgramByName(tempName, "Inverse");
+			}
+			else{
+				m_pMeshMngr->SetShaderProgramByName(tempName);
+			}
+		}
+		else{
+			m_pMeshMngr->SetShaderProgramByName(tempName);
+		}
+
+		/*
+			Logic to handle shield collision with asteroid
+			Checks for collision with current asteroid
+			Resets asteroids values to "create a new asteroid"
+		*/
 		if(shieldObject->IsColliding(*tempBO))
 		{
 			color = MEBLACK;
-			std::cout << "Colliding with: "<< tempName << std::endl;
+
 			asteroids[nAsteroid].life_time = 0.0f;
 			asteroids[nAsteroid].screen_percentage = 0.0f;
 
@@ -136,12 +180,15 @@ void ApplicationClass::Update (void)
 			asteroids[nAsteroid].go_right = direction;
 
 			randomY = rand() % (int)(height) + (int)(-half_height);
-			//numAsteroids--;
-			//tempBO->SetVisible(false);
 		}
 		
+		/*
+			Create vector3 variable which will be set to the translation coordinates of the asteroid model
+			Map the vector3 variables x component to the screen percentage
+			Make x component go from left to right or right to left depending on the asteroids direction boolean
+			Set y component to randomY, which is the the asteroids y value, either already set or reset due to prior collision
+		*/
 		vector3 v3Lerp;
-		// Map the lerp vectors x value with the current asteroids screen percentage
 		if(asteroids[nAsteroid].go_right){
 			v3Lerp.x = MapValue(asteroids[nAsteroid].screen_percentage, 0.0f, 1.0f, -half_width, half_width);
 		} else{

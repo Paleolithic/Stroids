@@ -27,6 +27,12 @@ class ApplicationClass
 	String m_sShieldObject;//Shield Object String
 	matrix4 m_m4ShieldObject;//Shield Model Matrix
 
+	BoundingObjectClass* shieldObject;
+	BoundingObjectClass* shipObject;
+
+	// Ship health variable
+	int shipHealth;
+
 	// Number of asteroids
 	int numAsteroids;
 	int maxAsteroids; 
