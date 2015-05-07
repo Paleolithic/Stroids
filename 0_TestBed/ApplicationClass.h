@@ -10,6 +10,7 @@ Date: 2014/10
 #include "ME\MyEngine.h"
 #include <SFML\Graphics.hpp>
 #include <chrono>
+#include "Asteroid.h"
 
 using namespace MyEngine; //Using MyEngine namespace to use all the classes in the dll
 
@@ -41,6 +42,8 @@ class ApplicationClass
 
 	// Asteroid array
 	BoundingObjectClass* m_pAsteroids;
+	std::vector<Asteroid> asteroids;
+
 	std::vector<vector3> lerp_vectors;
 	std::vector<float> asteroid_lt;
 	std::vector<float> asteroid_sp;
