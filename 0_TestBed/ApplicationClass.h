@@ -197,7 +197,7 @@ private:
 	/*
 	OctTree detection
 	*/
-	vector3 OctDectection(/*BoundingObjectClass* dude*/);
+	void OctDectection(/*BoundingObjectClass* dude*/);
 
 };
 #endif //__APPLICATION_H_

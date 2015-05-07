@@ -104,7 +104,7 @@ void ApplicationClass::Update (void)
 
 		// Map current asteroids screen percent to its lifetime
 		asteroid_sp[nAsteroid] = MapValue(asteroid_lt[nAsteroid], 0.0f, ScreenLength, 0.0f, 1.0f);
-		std::cout << asteroid_sp[nAsteroid] << std::endl;
+		//std::cout << asteroid_sp[nAsteroid] << std::endl;
 
 		// Get current asteroids bounding object class and see if it's colliding with the shield
 		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
@@ -131,49 +131,7 @@ void ApplicationClass::Update (void)
 	}
 
 	// Jared's shit
-
-	//MeshManagerSingleton* pMeshMngr = MeshManagerSingleton::GetInstance();
-	//	
-	//int numModels = pMeshMngr->GetNumberOfInstances();
-
-	//vector3 m_v3Centroid = vector3(0,0,0);
-	//vector3 v3Max = vector3(0,0,0);
-	//vector3 v3Min = vector3(0,0,0);
-	//vector3 m_v3BoxSize = vector3(0,0,0);
-
-	//for(int model = 0; model < numModels; model++){
-	//	//Get the information of the Bounding Box
-	//	BoundingObjectClass* pObject = m_pMeshMngr->GetBoundingObject(model);
-	//	//pObject->CalculateAABB();
-	//	vector3 v3MaxI = pObject->m_v3MaxAABBG;
-	//	vector3 v3MinI = pObject->m_v3MinAABBG;
-	//	if(v3Max.x < v3MaxI.x)
-	//		v3Max.x = v3MaxI.x;
-	//	else if(v3Min.x > v3MinI.x)
-	//		v3Min.x = v3MinI.x;
-
-	//	if(v3Max.y < v3MaxI.y)
-	//		v3Max.y = v3MaxI.y;
-	//	else if(v3Min.y > v3MinI.y)
-	//		v3Min.y = v3MinI.y;
-
-	//	if(v3Max.z < v3MaxI.z)
-	//		v3Max.z = v3MaxI.z;
-	//	else if(v3Min.z > v3MinI.z)
-	//		v3Min.z = v3MinI.z;
-	//}
-
-	//m_v3Centroid = (v3Min + v3Max) / 2.0f;
-
-	//m_v3BoxSize.x = glm::distance(vector3(v3Min.x, 0.0f, 0.0f), vector3(v3Max.x, 0.0f, 0.0f));
-	//m_v3BoxSize.y = glm::distance(vector3(0.0f, v3Min.y, 0.0f), vector3(0.0f, v3Max.y, 0.0f));
-	//m_v3BoxSize.z = glm::distance(vector3(0.0f, 0.0f, v3Min.z), vector3(0.0f, 0.0f, v3Max.z));
-
-
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(m_v3Centroid) * glm::scale(m_v3BoxSize), MERED, WIRE);
-
-	//vector3 size = OctDectection(steveObj);
-	//std::cout << size.x << "," << size.y << std::endl;
+	 OctDectection();
 
 	//OCTREE
 	//Top-Right corner
@@ -216,7 +174,7 @@ void ApplicationClass::Update (void)
 	printf("FPS: %d\r", m_pSystem->FPS);//print the Frames per Second	
 }
 
-vector3 ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
+void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 {
 	MeshManagerSingleton* pMeshMngr = MeshManagerSingleton::GetInstance();
 		
@@ -225,6 +183,11 @@ vector3 ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	vector3 m_v3Centroid = vector3(0,0,0);
 	vector3 v3Max = vector3(0,0,0);
 	vector3 v3Min = vector3(0,0,0);
+
+	vector3 boxSize = vector3(0,0,0);
+	float halfWidthX;
+	float halfWidthY;
+	float halfWidthZ;
 
 	for(int model = 0; model < numModels; model++){
 		String bs = pMeshMngr->GetNameOfInstanceByIndex(model);
@@ -244,50 +207,33 @@ vector3 ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 			v3Min.z = bo->GetCentroidGlobal().z;
 		else if(v3Max.z < bo->GetCentroidGlobal().z)
 			v3Max.z = bo->GetCentroidGlobal().z;
+
+		halfWidthX = bo->HalfWidth.x;
+		halfWidthY = bo->HalfWidth.y;
+		halfWidthZ = bo->HalfWidth.z;
+
 	}
 
 	m_v3Centroid = (v3Min + v3Max) / 2.0f;
 
+	boxSize.x = glm::distance(vector3(v3Min.x, 0.0f, 0.0f), vector3(v3Max.x, 0.0f, 0.0f));
+	boxSize.y = glm::distance(vector3(0.0f, v3Min.y, 0.0f), vector3(0.0f, v3Max.y, 0.0f));
+	boxSize.z = glm::distance(vector3(0.0f, 0.0f, v3Min.z), vector3(0.0f, 0.0f, v3Max.z));
 
-	return m_v3Centroid; 
-	//float width = MapValue((float)m_pSystem->GetWindowWidth(), 0.0f, 1280.0f, 0.0f, 22.5f);
-	//float height = MapValue((float)m_pSystem->GetWindowHeight(), 0.0f, 720.0f, 0.0f, (22.5f/1.8f));
+	//boxSize;
 
-	//std::vector<vector3> lVertices = pMeshMngr->GetVertices(dude->Getname());
-	//unsigned int nVertices = lVertices.size();
-	//vector3 m_v3Centroid = lVertices[0];
-	//vector3 v3Max = lVertices[0];
-	//vector3 v3Min = lVertices[0];
-	//for(unsigned int nVertex = 1; nVertex < nVertices; nVertex++)
-	//{
-	//	if(v3Min.x > lVertices[nVertex].x)
-	//		v3Min.x = lVertices[nVertex].x;
-	//	else if(v3Max.x < lVertices[nVertex].x)
-	//		v3Max.x = lVertices[nVertex].x;
-	//		
-	//	if(v3Min.y > lVertices[nVertex].y)
-	//		v3Min.y = lVertices[nVertex].y;
-	//	else if(v3Max.y < lVertices[nVertex].y)
-	//		v3Max.y = lVertices[nVertex].y;
+	m_pMeshMngr->AddCubeToQueue(glm::translate(m_v3Centroid) * glm::scale(boxSize), MERED, WIRE);
 
-	//	if(v3Min.z > lVertices[nVertex].z)
-	//		v3Min.z = lVertices[nVertex].z;
-	//	else if(v3Max.z < lVertices[nVertex].z)
-	//		v3Max.z = lVertices[nVertex].z;
-	//}
+	//Top Right
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/2)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z)), MERED, WIRE);
 
-	///*if(v3Max.x > width)
-	//{
-	//	if(v3Max.x > height)
-	//	{
-	//		return v3Max;
-	//	}
-	//}
+	//Top-Left corner
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/2)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z)), MERED, WIRE);
 
-	//return vector3(0,0,0);*/
-	//return v3Max;
-	
-	//m_v3Centroid = (v3Min + v3Max) / 2.0f;
+	//Bottom-Right corner
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/2)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z)), MERED, WIRE);
 
+	//Bottom-Left corner
+	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/2)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z)), MERED, WIRE);
 }
 
