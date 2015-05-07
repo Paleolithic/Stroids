@@ -40,6 +40,13 @@ class ApplicationClass
 	float half_w;
 	float half_h;
 
+	//Bool for oct tree detection
+	//bool nearShip;
+	bool b1Color;
+	bool b2Color;
+	bool b3Color;
+	bool b4Color;
+
 	// Asteroid array
 	BoundingObjectClass* m_pAsteroids;
 	std::vector<Asteroid> asteroids;
