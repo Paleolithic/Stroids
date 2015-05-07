@@ -38,7 +38,9 @@ void ApplicationClass::InitAppSystem(void)
 
 	// Get the singletons
 	m_pLightMngr = LightManagerSingleton::GetInstance();
+	
 }
+
 void ApplicationClass::Release()
 {
 	SafeDelete(m_pGrid);
@@ -76,6 +78,9 @@ ApplicationClass::ApplicationClass()
 
 	// Shield degree spin init
 	degreeSpin = 0;
+
+	// Ship health variable
+	shipHealth = 3;
 
 	// Width and height variable inits
 	width = 22.5f;
@@ -381,6 +386,7 @@ void ApplicationClass::InitInternalAppVariables()
 
 	m_pMeshMngr = MeshManagerSingleton::GetInstance();
 
+
 }
 void ApplicationClass::Idle (void)
 {
@@ -397,5 +403,7 @@ void ApplicationClass::Display (void) //for OpenGL 3.X Applications
 
 	m_pMeshMngr->Render();
 	
+
+
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
