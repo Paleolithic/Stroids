@@ -40,7 +40,7 @@ void ApplicationClass::Update (void)
 	//Variable for translate matrix
 	static float fTotalTime = 0.0f;
 	static float stroidTime = 0.0f;
-	float fLapDifference = m_pSystem->StopClock();
+	float fLapDifference = m_pSystem->LapClock();
 	fTotalTime += fLapDifference;
 	fRunTime += fLapDifference;
 	stroidTime += fLapDifference;
@@ -55,8 +55,8 @@ void ApplicationClass::Update (void)
 
 	// Pig translate matrixes
 	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
-	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
-	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
+	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
+	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
 	
 	// Pig combined translate matrix
 	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
@@ -138,28 +138,14 @@ void ApplicationClass::Update (void)
 
 		switch(shipHealth){
 		case 2:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Inverse");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MEYELLOW);
 			break;
 		case 1:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "GrayScale");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MERED);
 			break;
 		case 0:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Color");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MEBLACK);
 			break;
-		}
-
-		// Make asteroid blink right after colliding
-		// TODO: Rework
-		if(asteroids[nAsteroid].colliding){
-			if((int)asteroids[nAsteroid].life_time % 2 == 0){
-				m_pMeshMngr->SetShaderProgramByName(tempName, "Inverse");
-			}
-			else{
-				m_pMeshMngr->SetShaderProgramByName(tempName);
-			}
-		}
-		else{
-			m_pMeshMngr->SetShaderProgramByName(tempName);
 		}
 
 		/*
@@ -167,7 +153,7 @@ void ApplicationClass::Update (void)
 			Checks for collision with current asteroid
 			Resets asteroids values to "create a new asteroid"
 		*/
-		if(shieldObject->IsColliding(*tempBO))
+		if(shieldObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding)
 		{
 			color = MEBLACK;
 
@@ -180,6 +166,20 @@ void ApplicationClass::Update (void)
 			asteroids[nAsteroid].go_right = direction;
 
 			randomY = rand() % (int)(height) + (int)(-half_height);
+		}
+
+		// Make asteroid blink right after colliding
+		// TODO: Rework
+		if(asteroids[nAsteroid].colliding){
+			if((int)asteroids[nAsteroid].life_time % 2 == 0){
+				m_pMeshMngr->SetShaderProgramByName(tempName, "MonoChrome", MEBLACK);
+			}
+			else{
+				m_pMeshMngr->SetShaderProgramByName(tempName);
+			}
+		}
+		else{
+			m_pMeshMngr->SetShaderProgramByName(tempName);
 		}
 		
 		/*
@@ -202,46 +202,7 @@ void ApplicationClass::Update (void)
 	}
 
 	// Jared's shit
-	 OctDectection();
-
-	
-	////Top-Right corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside top right
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Top-Left corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside top left
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Bottom-Right corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside bottom right
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Bottom-Left corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside bottom left
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);*/
-	
-
+	OctDectection();
 
 	printf("FPS: %d\r", m_pSystem->FPS);//print the Frames per Second	
 }

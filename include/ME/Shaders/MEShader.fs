@@ -41,6 +41,7 @@ bool ComputeDiffuseAndAmbient()
 	{
 		MaterialDiffuseColor = vec4(Color, 1);
 	}
+
 	MaterialAmbientColor = vec4(AmbientColor, 1) * MaterialDiffuseColor * AmbientPower;
 	return true;
 }

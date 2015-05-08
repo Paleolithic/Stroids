@@ -6,6 +6,8 @@ Created by Alberto Bobadilla (labigm@rit.edu) in 2013
 
 #include "ME\system\SystemSingleton.h"
 
+//Quaternion implementation based on the quaternion camera:
+//http://hamelot.co.uk/visualization/moderngl-camera/
 namespace MyEngine
 {
 
@@ -16,85 +18,168 @@ class MyEngineDLL CameraSingleton
 	float m_fNear;			//Near clipping plane
 	float m_fFar;			//Far clipping plane
 
+	float m_fHeading; //Heading orientation
+	float m_fPitch; //Pitch orientation
+
+	float m_fPitchRateMax; //Maximum pitch displacement
+	float m_fHeadingRateMax;//Maximum heading displacement
+
 	static CameraSingleton* m_pInstance;//Singleton
 	SystemSingleton* m_pSystem; //System pointer
+
+	vector3 m_v3Position; //CameraPosition
+	vector3 m_v3Forward; //Camera view vector
+	vector3 m_v3Up; //Camera up vector
+
+	vector3 m_v3PositionDelta; //Difference in position
+	vector3 m_v3LookAt; //Point to which the camera is looking at
 
 	matrix4 m_m4Projection; //Projection
 	matrix4 m_m4View; //View
 	matrix4 m_m4MVP; //MVP
 
-	vector3 m_v4Position; //CameraPosition
-	vector3 m_v3Forward; //Camera view vector
-	vector3 m_v3Up; //Camera up vector
+	matrix4 m_m4ViewInverse; //Inverse of the view
+	matrix4 m_m4VPInverse; // Inverse of the View-Projection matrix
 
-	
 public:
-	/* Gets/Constructs the singleton pointer */
+	/*
+		Gets/Constructs the singleton pointer
+	*/
 	static CameraSingleton* GetInstance();
-	/* Destroys the singleton */
+	/*
+		Destroys the singleton
+	*/
 	static void ReleaseInstance(void);
 
-	/* Rotates the camera at an specified Euler angle */
-	void Rotate(float a_fAngX, float a_fAngY);
-
-	/* Translates the camera forward or backward */
+	/*
+		Translates the camera forward or backward
+	*/
 	void MoveForward(float a_fDistance = 0.1f);
-	/* Translates the camera horizontally */
+	/*
+		Translates the camera horizontally
+	*/
 	void MoveSideways(float a_fDistance = 0.1f);
-	/* Translates the camera vertically */
+	/*
+		Translates the camera vertically
+	*/
 	void MoveVertical(float a_fDistance = 0.1f);
 
-	/* Sets the camera position by the specified vector3 */
+	/*
+		Sets the camera position by the specified vector3
+	*/
 	void SetPosition(vector3 a_v3Position);
-	/* Gets the position of the camera in world space */
+	/*
+		Gets the position of the camera in world space
+	*/
 	vector3 GetPosition(void);
 
-	/* Sets the direction of the view vector of the camera*/
+	/*
+		Sets the camera at the specified position looking at the specified point
+	*/
+	void SetPositionAndView(vector3 a_v3Position, vector3 a_v3Target);
+
+	/*
+		Sets the direction of the view vector of the camera
+	*/
 	void SetForwardVector(vector3 a_v3Forward);
-	/* Gets the view direction vector in world space */
+	/*
+		Gets the view direction vector in world space
+	*/
 	vector3 GetForwardVector(void);
 
-	/* Sets the up vector of the camera */
+	/*
+		Sets the up vector of the camera
+	*/
 	void SetUpVector(vector3 a_v3Direction);
-	/* Gets the up vector of the camera in world space */
+	/*
+		Gets the up vector of the camera in world space
+	*/
 	vector3 GetUpVector(void);
 
-	/* Calculates the view of the camera */
+	/*
+		Calculates the view of the camera
+	*/
 	void CalculateView();
-	/* Sets the view of the camera by the specified matrix */
+	/*
+		Sets the view of the camera by the specified matrix
+	*/
 	void SetView(matrix4 a_m4View);
-	/* Gets the view of the camera singleton*/
+	/*
+		Gets the view of the camera singleton
+	*/
 	matrix4 GetView(void);
-	/* Property SetView/GetView*/
-	__declspec(property(put = SetView, get = GetView)) matrix4 View;
 
-	/* Calculates the projection of the camera */
+	/*
+		Gets the view of the camera singleton
+	*/
+	matrix4 GetViewInverse(void);
+
+	/*
+		Returns a matrix that would position a 1x1 plane right in front of camera
+	*/
+	matrix4 GetCameraPlane(void);
+
+	/*
+		Returns the space 1.2085 units in front of camera (where 1 is the top border and -1 is the bottom border
+	*/
+	matrix4 GetCameraSpaceAdjusted(void);
+
+	/*
+		Calculates the projection of the camera
+	*/
 	void CalculateProjection();
-	/* Sets the projection of the camera by the specified matrix */
+	/*
+		Sets the projection of the camera by the specified matrix
+	*/
 	void SetProjection(matrix4 a_m4Projection);
-	/* Asks the camera singleton for the projection */
+	/*
+		Asks the camera singleton for the projection
+	*/
 	matrix4 GetProjection();
-	/* Property SetProjection/GetProjection*/
-	__declspec(property(put = SetProjection, get = GetProjection)) matrix4 Projection;
 	
-	/* Gets the Model-View-Projection matrix of the camera */
-	matrix4 GetMVP();
-	/* Gets the Model-View-Projection matrix of the camera specifying the model view matrix*/
+	/*
+		Gets the inverse of the View Projection matrix of the camera
+	*/
+	matrix4 GetInverseVP();
+	/*
+		Gets the View-Projection matrix of the camera
+	*/
+	matrix4 GetVP();
+	/*
+		Gets the Model-View-Projection matrix of the camera specifying the model view matrix
+	*/
 	matrix4 GetMVP(matrix4 a_m4ToWorld);
-	/* Property GetMVP*/
-	__declspec(property(get = GetMVP)) matrix4 VMP;
 
-	/* Sets the camera to be looking at the specified point in global space */
+	/*
+		Sets the camera to be looking at the specified point in global space
+	*/
 	void SetView(vector3 a_v3Target);
 
-	/* Asks the camera for its field of view */
+	/*
+		Asks the camera for its field of view
+	*/
 	float GetFieldOfView(void);
-	/* Asks the camera for its near clipping plane */
+	/*
+		Asks the camera for its near clipping plane
+	*/
 	float GetNear(void);
-	/* Asks the camera for its far clipping plane */
+	/*
+		Asks the camera for its far clipping plane
+	*/
 	float GetFar(void);
-
+	/*
+		Prints the information of the camera in the console
+	*/
 	void PrintInfo(void);
+
+	/*
+		Changes the pitch by the degree input
+	*/
+	void ChangePitch(float degrees);
+	/*
+		Changes the heading by the degree input
+	*/
+	void ChangeHeading(float degrees);
 
 private:
 	/* Constructor */

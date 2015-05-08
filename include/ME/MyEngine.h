@@ -7,7 +7,7 @@ Date: 2014/07
 
 #pragma warning( disable : 4251 )
 
-#include "ME\system\MEDefinitions.h" //Definitions of MyEngine
+#include "ME\system\MEDefinitions.h" //MyEngine basic Definitions
 #include "ME\system\SystemSingleton.h" //System related methods
 
 #include "ME\system\WindowClass.h" //WinAPI encapsulated methods
@@ -37,6 +37,30 @@ Date: 2014/07
 #include "ME\Mesh\ModelManagerSingleton.h" //Manages models and instances
 
 #include "ME\Camera\CameraSingleton.h" //Creates and manages the camera object for the world
+
+/*
+	MapValue
+	will return the mapped value of the provided input argument from the input scale on the output scale
+*/
+template <class T>
+static float MapValue(T valueToMap, T originalScale_min, T originalScale_max, T mappedScale_min, T mappedScale_max)
+{
+	return (valueToMap - originalScale_min) * (mappedScale_max - mappedScale_min) / (originalScale_max - originalScale_min) + mappedScale_min;
+}
+
+/*
+	MapVector
+	Will return a vector mapped in the mappedScale range from a value vectorToMap in the OriginalScale range
+*/
+static vector3 MapVector(vector3 vectorToMap, vector3 originalScaleVectorMin, vector3 originalScaleVectorMax,
+						 vector3 mappedScaleVectorMin, vector3 mappedScaleVectorMax)
+{
+	vector3 v3Output;
+	v3Output.x = MapValue(vectorToMap.x, originalScaleVectorMin.x, originalScaleVectorMax.x, mappedScaleVectorMin.x, mappedScaleVectorMax.x);
+	v3Output.y = MapValue(vectorToMap.y, originalScaleVectorMin.y, originalScaleVectorMax.y, mappedScaleVectorMin.y, mappedScaleVectorMax.y);
+	v3Output.z = MapValue(vectorToMap.z, originalScaleVectorMin.z, originalScaleVectorMax.z, mappedScaleVectorMin.z, mappedScaleVectorMax.z);
+	return v3Output;
+}
 
 static void ReleaseAllSingletons(void)
 {

@@ -41,6 +41,7 @@ protected:
 	ShaderManagerSingleton* m_pShaderMngr;	//Shader Manager
 
 	String m_sName;	//Identifier of the Mesh
+	vector3 m_v3Tint; //Color modifier
 	
 	std::vector<vector3> m_lVertexPos;	//List of Vertices
 	std::vector<vector3> m_lVertexCol;	//List of Colors
@@ -71,10 +72,10 @@ public:
 	__declspec(property(get = GetBinded)) bool Binded;
 
 	/* Set the shader to the newly loaded shader */
-	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName);
+	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName, vector3 a_v3Tint = MEDEFAULT);
 
 	/* Sets the shader of the Shape to a loaded shader */
-	void SetShaderProgram(String a_sShaderName = "Original");
+	void SetShaderProgram(String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 	/* Property SetShaderProgram */
 	__declspec(property(put = SetShaderProgram)) String ShaderProgram;
 

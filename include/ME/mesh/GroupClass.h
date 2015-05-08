@@ -79,8 +79,8 @@ public:
 
 	void SwapMaterial( String a_sOldMaterialName, String a_sNewMaterialName);
 
-	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName);
-	void SetShaderProgram(String a_sShaderName = "Original");
+	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName, vector3 a_v3Tint = MEDEFAULT);
+	void SetShaderProgram(String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 
 	void SetMaterial(String a_sMaterialName);
 
@@ -148,9 +148,9 @@ public:
 
 	void SetModelMatrix(matrix4 a_nMatrix);
 
-	void Render(int a_nFrame = 0);//Render all shapes
-	void RenderBO(bool a_bForce = false);//Render all debug
-	void RenderAxis(bool a_bForce = false);//Render all debug
+	void AddToRenderList(int a_nFrame = 0);//Add all shapes to the render list
+	void AddBOToRenderList(bool a_bForce = false);//Render all debug
+	void AddAxisToRenderList(bool a_bForce = false);//Render all debug
 
 private:
 	void Init(void);

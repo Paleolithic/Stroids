@@ -10,7 +10,7 @@ Date: 2014/05
 
 #include <windows.h>
 #include "Resource.h"
-#include "ME\system\MeDefinitions.h"
+#include "ME\system\MEDefinitions.h" //MyEngine basic Definitions
 
 namespace MyEngine
 {

@@ -52,9 +52,9 @@ public:
 
 	//Accessors
 	/* Sets the Shader program */
-	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName);
+	void SetShaderProgram(String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName, vector3 a_v3Tint = MEDEFAULT);
 	/* Sets the shader program to a program already compiled */
-	void SetShaderProgram(String a_sShaderName = "Original");
+	void SetShaderProgram(String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 
 	/* Sets the Model to World matrix of the instance*/
 	void SetModelMatrix(const matrix4 a_m4ToWorld = matrix4(1.0f));
@@ -94,15 +94,20 @@ public:
 	/* Set the visibility frag for the Axis of the instance and the groups*/
 	void SetVisibleAxis(bool a_bVisibleAxis, bool a_bGroups = false);
 
+	/*
+		Gets the current state of the instance
+	*/
+	int GetCurrentState(void);
+
 	/* Sets the next state of the instance */
-	void SetNextState(int a_nNext);
+	void SetNextState(int a_nNext, bool b_Force = false);
 	/* Sets the current state of the instance (it forces the switch) */
 	void SetCurrentSate(int a_nState);
 
 	/* Change the shader program of a group finding it by name */
-	void SetGroupShaderByName(String a_sProgramName = "Original", String a_sGroupName = "ALL");
+	void SetGroupShaderByName(String a_sProgramName = "Original", String a_sGroupName = "ALL", vector3 a_v3Tint = MEDEFAULT);
 	/* Change the shader program of a group finding it by index */
-	void SetGroupShaderByNumber(String a_sProgramName = "Original", int nGroup = -1);
+	void SetGroupShaderByNumber(String a_sProgramName = "Original", int nGroup = -1, vector3 a_v3Tint = MEDEFAULT);
 	/* Change the material of a group finding it by name, the material needs to be already compiled */
 	void SetGroupMaterial(String a_sMaterialName, String a_sGroupName = "ALL");
 
@@ -139,8 +144,8 @@ public:
 	/* Updates all the internal structures of the instance*/
 	void Update(void);
 
-	/* Renders all groups of the instance */
-	void Render(void);
+	/* Adds all groups of the instance to the render list */
+	void AddToRenderList(void);
 
 	/* Asks the instance if its already done instanciated */
 	bool IsInstanced(void);
