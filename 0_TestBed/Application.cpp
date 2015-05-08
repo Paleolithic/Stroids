@@ -9,7 +9,7 @@ void ApplicationClass::InitUserAppVariables()
 	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
 	
 	//= m_pMeshMngr->GetInstanceByName("Steve");
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Ship_Shield.obj", "Shield");
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Shield_updated.obj", "Shield");
 	m_sShieldObject = "Shield";
 	bool clockwise = true;
 
@@ -17,7 +17,9 @@ void ApplicationClass::InitUserAppVariables()
 
 	// Steve and Pig Bounding Object Classes
 	shipObject = m_pMeshMngr->GetBoundingObject("Ship");
+	shipObject->SetVisibleAABB(true);
 	shieldObject = m_pMeshMngr->GetBoundingObject("Shield");
+	shieldObject->SetVisibleAABB(true);
 
 	/*float xPos = rand() % (int)(width) + (int)(-width);
 	float yPos = rand() % (int)(height) + (int)(-height/2);
@@ -51,7 +53,7 @@ void ApplicationClass::Update (void)
 
 	
 	vector3 pigPos = shipObject->GetCentroidGlobal();
-	pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
+	//pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
 
 	// Pig translate matrixes
 	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
@@ -92,7 +94,7 @@ void ApplicationClass::Update (void)
 		asteroids.push_back(Asteroid(pos, speed, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Asteroid2.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
 		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
 
 		//Reset timer
@@ -110,6 +112,7 @@ void ApplicationClass::Update (void)
 		*/
 		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
+		tempBO->SetVisibleAABB(true);
 		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 
 		/*
@@ -301,10 +304,10 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 
 	//Getting ship object
-	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Steve");
+	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Ship");
 	
 	//Checking if ship and asteroid are in the same area in the octTree
-	/*for(int i = 0; i < 4; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		if(shipObject->IsColliding(*bBoxes[i]))
 		{
@@ -340,7 +343,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 		}
 
-	}*/
+	}
 
 }
 
