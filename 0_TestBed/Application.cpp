@@ -4,20 +4,20 @@ void ApplicationClass::InitUserAppVariables()
 {
 	m_pCamera->SetPosition(vector3(0.0f, 0.0f, 15.0f));
 
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Steve.obj", "Steve");
-	m_sShipObject = "Steve";
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Ship.obj", "Ship");
+	m_sShipObject = "Ship";
 	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
 	
 	//= m_pMeshMngr->GetInstanceByName("Steve");
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Pig.obj", "Pig");
-	m_sShieldObject = "Pig";
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Ship_Shield.obj", "Shield");
+	m_sShieldObject = "Shield";
 	bool clockwise = true;
 
 	srand (time(NULL));	 
 
 	// Steve and Pig Bounding Object Classes
-	shipObject = m_pMeshMngr->GetBoundingObject("Steve");
-	shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
+	shipObject = m_pMeshMngr->GetBoundingObject("Ship");
+	shieldObject = m_pMeshMngr->GetBoundingObject("Shield");
 
 	/*float xPos = rand() % (int)(width) + (int)(-width);
 	float yPos = rand() % (int)(height) + (int)(-height/2);
@@ -63,7 +63,7 @@ void ApplicationClass::Update (void)
 	
 	// Set Pig Model Matrix
 	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
-	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Pig");
+	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Shield");
 	
 	//First person camera movement
 	if(m_bFPC == true)
@@ -92,7 +92,7 @@ void ApplicationClass::Update (void)
 		asteroids.push_back(Asteroid(pos, speed, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Asteroid2.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
 		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
 
 		//Reset timer
@@ -343,7 +343,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Steve");
 	
 	//Checking if ship and asteroid are in the same area in the octTree
-	for(int i = 0; i < 4; i++)
+	/*for(int i = 0; i < 4; i++)
 	{
 		if(shipObject->IsColliding(*bBoxes[i]))
 		{
@@ -379,7 +379,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 		}
 
-	}
+	}*/
 
 }
 
