@@ -44,9 +44,9 @@ public:
 	/* Sets the shader program of an specific instance */
 	void SetShaderProgram(String a_sInstanceName, String a_sVertexShaderName, String a_sFragmentShaderName, String a_sShaderName);
 	/* Sets the shader program of an specific instance by name */
-	void SetShaderProgramByName(String a_sInstanceName = "ALL", String a_sShaderName = "Original");
+	void SetShaderProgramByName(String a_sInstanceName = "ALL", String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 	/* Sets the shader program of an specific instance by index */
-	void SetShaderProgramByNumber(int a_nInstance = -1, int a_nGroup = -1, String a_sShaderName = "Original");
+	void SetShaderProgramByNumber(int a_nInstance = -1, int a_nGroup = -1, String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 
 	/* Sets the model matrix of an specific instance finding it by name */
 	void SetModelMatrix(matrix4 a_mMatrix, String a_sInstance = "ALL", bool a_bUpdateOctree = false);
@@ -64,17 +64,33 @@ public:
 	void SetVisibleOctree(bool a_bVisibleOctree);
 
 		/* Sets the Visibility of the Grand Bounding object of an specified instance by name*/
-	void SetVisibleGrandBoundingObjectByName(bool a_bVisibleOB, String a_sInstance = "ALL");
+	void SetVisibleGrandBoundingObject(bool a_bVisibleOB, String a_sInstance = "ALL");
 	/* Sets the Visibility of the Grand Bounding object of an specified instance by group*/
-	void SetVisibleGrandBoundingObjectByNumber(bool a_bVisibleOB, int a_nInstance = -1);
+	void SetVisibleGrandBoundingObject(bool a_bVisibleOB, int a_nIndex);
 
 	/* Sets the Visibility of the Frame Bounding object of an specified instance by name*/
-	void SetVisibleFrameBoundingObjectByName(bool a_bVisibleOB, String a_sInstance = "ALL", String a_sGroup = "ALL");
+	void SetVisibleFrameBoundingObject(bool a_bVisibleOB, String a_sInstance = "ALL", String a_sGroup = "ALL");
 	/* Sets the Visibility of the Frame Bounding object of an specified instance by group*/
-	void SetVisibleFrameBoundingObjectByNumber(bool a_bDebug, int a_nInstance = -1, int a_nGroup = -1);
+	void SetVisibleFrameBoundingObject(bool a_bDebug, int a_nIndex, int a_nGroupIndex);
 	
 	/* Asks the manager for the name of an instance by index returns empty if nothing found */
 	String GetInstanceName(int a_nIndex);
+
+	/*
+		Gets the current state of the model
+		input:
+			a_sInstanceName: Name of the model to look
+		output: -1 if model does not exist
+	*/
+	int GetCurrentState(String a_sInstanceName);
+
+	/*
+		Gets the current state of the model
+		input:
+			a_nInstanceIndex: Index of the model to look
+		output: -1 if model does not exist
+	*/
+	int GetCurrentState(int a_nInstanceIndex);
 
 	/* Sets the next state of the specified instance */
 	void SetNextState(String a_sIntance, int a_nNextState);

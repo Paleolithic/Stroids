@@ -5,10 +5,10 @@ uniform sampler2D NormalID;
 uniform sampler2D SpecularID;
 uniform vec3 LightPosition_W;
 
+uniform vec3 Tint;
+
 uniform vec3 AmbientColor;
 uniform float AmbientPower;
-
-uniform vec3 Tint;
 
 uniform vec3 LightColor;
 uniform float LightPower;
@@ -35,9 +35,9 @@ bool ComputeDiffuseAndAmbient()
 	{
 		MaterialDiffuseColor = texture2D( TextureID, UV );
 		
-		vec3 newColor = MaterialDiffuseColor.xyz;
-		
-		MaterialDiffuseColor = vec4(1 - newColor.x, 1 - newColor.y, 1 - newColor.z, MaterialDiffuseColor.w);
+		float newColor = MaterialDiffuseColor.x + MaterialDiffuseColor.y + MaterialDiffuseColor.z;
+		newColor = newColor / 3.0;
+		MaterialDiffuseColor = vec4(newColor, newColor, newColor, MaterialDiffuseColor.w);
 
 		if(MaterialDiffuseColor.w == 0)
 		{
@@ -50,7 +50,7 @@ bool ComputeDiffuseAndAmbient()
 	}
 
     if(Tint.x != -1 && Tint.y != -1 && Tint.z != -1)
-        MaterialDiffuseColor = MaterialDiffuseColor * vec4(Tint, 1);
+            MaterialDiffuseColor = MaterialDiffuseColor * vec4(Tint, 1);
 
 	MaterialAmbientColor = vec4(AmbientColor, 1) * MaterialDiffuseColor * AmbientPower;
 	return true;
@@ -123,5 +123,6 @@ void main()
 	MaterialSpecularColor = MaterialSpecularColor * Specular;
 
 	Fragment = MaterialAmbientColor + MaterialSpecularColor + MaterialDiffuseColor;
-	return;
+
+    return;
 }

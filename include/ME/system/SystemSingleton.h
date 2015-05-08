@@ -5,58 +5,10 @@ Date: 2014/05
 #ifndef __SystemSingleton_H_
 #define __SystemSingleton_H_
 
-#include "ME\system\MeDefinitions.h"
-
-// Include standard headers
-#include <Windows.h>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <algorithm>
-#include <assert.h>
-#include <math.h>
-#include <vector>
-
-// Include GLM
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
-#include <glm\gtx\transform.hpp>
-#include <glm\ext.hpp>
-
 #include "ME\System\FolderSingleton.h"
 
 namespace MyEngine
 {
-
-typedef std::string String;
-typedef glm::vec2 vector2;
-typedef glm::vec3 vector3;
-typedef glm::vec4 vector4;
-typedef glm::mat4 matrix4;
-
-#define MEBLACK vector3(0.0f, 0.0f, 0.0f)
-#define MEWHITE vector3(1.0f, 1.0f, 1.0f)
-#define MEGRAY vector3(0.3f, 0.3f, 0.3f)
-
-#define MERED vector3(1.0f, 0.0f, 0.0f)
-#define MEMAGENTA vector3(1.0f, 0.0f, 1.0f)
-#define MEBROWN vector3(0.6f,0.3f,0.0f)
-
-#define MEGREEN vector3(0.0f, 1.0f, 0.0f)
-#define MEGREENDARK vector3(0.0f, 5.0f, 0.0f)
-#define MELIME vector3(0.33f,0.90f,0.33f)
-
-#define MEBLUE vector3(0.0f, 0.0f, 1.0f)
-#define MECYAN vector3(0.0f,1.0f,1.0f)
-
-#define MEYELLOW vector3(1.0f, 1.0f, 0.0f)
-#define MEORANGE vector3(1.0f,0.5f,0.0f)
-#define MEVIOLET vector3(0.54f,0.16f,0.88f)
-#define MEPURPLE vector3(0.50f,0.0f,0.50f)
-
-#define MEDEFAULT vector3(-1.0f, -1.0f, -1.0f)
 
 //System Class
 class MyEngineDLL SystemSingleton
@@ -80,6 +32,8 @@ class MyEngineDLL SystemSingleton
 	DWORD m_dTimerStart; //Start time of the program
 	DWORD m_dStartingTime; //Start time of the program
 	DWORD m_dLastFPS; //Last time the time was called
+
+	std::vector<DWORD> lClock;//clockls list
 	
 public:
 	static SystemSingleton* GetInstance(); // Singleton accessor
@@ -124,15 +78,21 @@ public:
 	void SetWindowName(String a_sWindowName);
 	String GetWindowName(void);
 
+	/*
+	float GetWindowRatio(void);
+		This will return the proportions of the window size in the system, from bottom to top of the window the value is 1,
+		from left to right the value is the output of this function.
+	*/
+	float GetWindowRatio(void);
+
 	// WindowX Property
 	__declspec(property(get = GetFPS)) int FPS;
 	int GetFPS(void);
 
 	void UpdateTime(void);//Updates the current time
-	void StartClock(void);//Starts a time count
-	float StopClock(void);//Stops the time count resets the timer and returns the number of seconds passed
 	//float LapClock(void);//Checks the time difference between startclock and current call
-	float LapClock(unsigned int a_nClock = 0);//Gets the time difference between the last time this method was called for this particular clock
+	void StartClock(unsigned int a_nClock = 1);//Starts a time count for the specified clock
+	float LapClock(unsigned int a_nClock = 1);//Gets the time difference between the last time this method was called for this particular clock
 	bool CountDown(float a_fTime, bool a_bRepeat = false);//counts down on the specified clock, returns true when the count is up
 
 	FolderSingleton* m_pFolder;

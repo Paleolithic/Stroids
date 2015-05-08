@@ -7,9 +7,7 @@ Date: 2014/05
 
 #include <GL\glew.h>
 #include <GL\wglew.h>
-#include "ME\system\MeDefinitions.h"
-
-
+#include "ME\system\MEDefinitions.h" //MyEngine basic Definitions
 
 MyEngineDLL GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
 

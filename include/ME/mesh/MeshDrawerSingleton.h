@@ -7,6 +7,7 @@ Date: 2015/03
 
 #include "ME\System\SystemSingleton.h"
 #include "ME\Mesh\MeshClass.h"
+#include <map>
 
 namespace MyEngine
 {
@@ -35,7 +36,7 @@ class MyEngineDLL MeshDrawerSingleton
 	std::vector<MeshClass*> m_lMesh; //list of meshes
 	std::vector<MeshHandler*> m_lMeshHandler; //list of mesh handlers
 	float* m_fMatrix;	//List of matrices to render in float form;
-
+	std::map<String,int> m_map;
 public:
 
 	/* Gets/Constructs the singleton pointer */

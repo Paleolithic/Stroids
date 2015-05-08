@@ -5,6 +5,8 @@ uniform sampler2D TextureID;
 in vec2 UV;
 in vec3 Color;
 
+uniform vec3 Tint;
+
 out vec4 Fragment;
 
 void main()
@@ -17,5 +19,6 @@ void main()
 	{
 		Fragment = vec4(Color,1);
 	}
+
 	return;
 }

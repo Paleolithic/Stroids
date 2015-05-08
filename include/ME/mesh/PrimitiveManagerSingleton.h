@@ -9,6 +9,7 @@ Date: 2014/12
 #include "ME\Mesh\PrimitiveWireClass.h"
 #include "ME\Mesh\MeshDrawerSingleton.h"
 
+
 namespace MyEngine
 {
 
@@ -33,6 +34,7 @@ class MyEngineDLL PrimitiveManagerSingleton
 	MeshClass* m_pSphereWire;//Sphere Wire primitive
 
 	MeshDrawerSingleton* m_pMeshDrawer;
+	
 
 public:
 	/* Gets/Constructs the singleton pointer */

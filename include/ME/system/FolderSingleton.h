@@ -6,7 +6,8 @@ Created by Alberto Bobadilla (labigm@rit.edu) in 2013
 
 #include <string>
 #include <Windows.h>
-#include "ME\system\MeDefinitions.h"
+
+#include "ME\system\MEDefinitions.h" //MyEngine basic Definitions
 
 namespace MyEngine
 {

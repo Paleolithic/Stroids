@@ -11,7 +11,7 @@
 #include <GL\glew.h>
 #include <GL\wglew.h>
 
-#include "ME\system\MeDefinitions.h"
+
 
 namespace MyEngine
 {

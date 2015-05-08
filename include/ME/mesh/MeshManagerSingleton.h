@@ -51,6 +51,9 @@ public:
 	/* Sets the model matrix of an specific instance finding it by name */
 	void SetModelMatrix(matrix4 a_m4ToWorld, String a_sInstance = "ALL", bool a_bUpdateOctree = false);
 
+	/* Sets the model matrix of an specific instance finding it by index */
+	void SetModelMatrix(matrix4 a_m4ToWorld, int a_nIndex, bool a_bUpdateOctree = false);
+
 	/* Asks the manager for an specific instance's model to world matrix */
 	matrix4 GetModelMatrix(String a_sInstance);
 
@@ -133,10 +136,10 @@ public:
 	int IdentifyInstance(String a_sInstanceName);
 
 	/* Sets the shader program of an specific instance by name */
-	void SetShaderProgramByName(String a_sInstanceName = "ALL", String a_sShaderName = "Original");
+	void SetShaderProgramByName(String a_sInstanceName = "ALL", String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 
 	/* Sets the shader program of an specific instance by index */
-	void SetShaderProgramByNumber(int a_nInstance = -1, int a_nGroup = -1, String a_sShaderName = "Original");
+	void SetShaderProgramByNumber(int a_nInstance = -1, int a_nGroup = -1, String a_sShaderName = "Original", vector3 a_v3Tint = MEDEFAULT);
 
 	/* Sets the visibility of the hierarchical Bounding Object */
 	void SetVisibleBoundingObjectHierarchy(bool a_bVisible, String a_sInstanceName = "ALL");
