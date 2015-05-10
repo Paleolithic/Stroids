@@ -91,10 +91,11 @@ void ApplicationClass::Update (void)
 
 		float speed = rand() % 5 + 3;
 		float direction = rand() % 2;
-		asteroids.push_back(Asteroid(pos, speed, direction));
+		float scale = rand() % 5 + 3;
+		asteroids.push_back(Asteroid(pos, speed, scale, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f))));
 		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
 
 		//Reset timer
@@ -211,10 +212,8 @@ void ApplicationClass::Update (void)
 }
 
 void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
-{
-	MeshManagerSingleton* pMeshMngr = MeshManagerSingleton::GetInstance();
-		
-	int numModels = pMeshMngr->GetNumberOfModels();
+{		
+	int numModels = m_pMeshMngr->GetNumberOfInstances();
 
 	vector3 m_v3Centroid = vector3(0,0,0);
 	vector3 v3Max = vector3(0,0,0);
@@ -226,8 +225,8 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	float halfWidthZ;
 
 	for(int model = 0; model < numModels; model++){
-		String bs = pMeshMngr->GetNameOfInstanceByIndex(model);
-		BoundingObjectClass* bo = pMeshMngr->GetBoundingObject(bs);
+		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 
 		if(v3Min.x > bo->GetCentroidGlobal().x)
 			v3Min.x = bo->GetCentroidGlobal().x;
@@ -269,7 +268,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 
 	//Giving cubes boudning boxes
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
+	//m_m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
 	BoundingObjectClass* box1 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box2 = new BoundingObjectClass(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box3 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
@@ -358,9 +357,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 				b2Color = false;
 				b3Color = false;
 			}
-
 		}
-
 	}
 
 }

@@ -13,12 +13,13 @@ public:
 	/*
 	Constructor - Set starting position, speed, and direction
 	*/
-	Asteroid(vector3 position, float spd, bool right);
+	Asteroid(vector3 position, float spd, float scl, bool right);
 	~Asteroid(void);
 
 	float life_time;
 	float screen_percentage;
 	float speed;
+	float scale;
 	bool go_right;
 	
 	bool colliding;
