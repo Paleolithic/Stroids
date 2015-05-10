@@ -57,10 +57,6 @@ class ApplicationClass
 	BoundingObjectClass* m_pAsteroids;
 	std::vector<Asteroid> asteroids;
 
-	std::vector<vector3> lerp_vectors;
-	std::vector<float> asteroid_lt;
-	std::vector<float> asteroid_sp;
-
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class
 	SystemSingleton* m_pSystem;// Singleton of the system

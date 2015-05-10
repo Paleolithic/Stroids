@@ -4,20 +4,22 @@ void ApplicationClass::InitUserAppVariables()
 {
 	m_pCamera->SetPosition(vector3(0.0f, 0.0f, 15.0f));
 
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Steve.obj", "Steve");
-	m_sShipObject = "Steve";
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Ship.obj", "Ship");
+	m_sShipObject = "Ship";
 	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
 	
 	//= m_pMeshMngr->GetInstanceByName("Steve");
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Pig.obj", "Pig");
-	m_sShieldObject = "Pig";
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Shield_updated.obj", "Shield");
+	m_sShieldObject = "Shield";
 	bool clockwise = true;
 
 	srand (time(NULL));	 
 
 	// Steve and Pig Bounding Object Classes
-	shipObject = m_pMeshMngr->GetBoundingObject("Steve");
-	shieldObject = m_pMeshMngr->GetBoundingObject("Pig");
+	shipObject = m_pMeshMngr->GetBoundingObject("Ship");
+	shipObject->SetVisibleAABB(true);
+	shieldObject = m_pMeshMngr->GetBoundingObject("Shield");
+	shieldObject->SetVisibleAABB(true);
 
 	/*float xPos = rand() % (int)(width) + (int)(-width);
 	float yPos = rand() % (int)(height) + (int)(-height/2);
@@ -40,7 +42,7 @@ void ApplicationClass::Update (void)
 	//Variable for translate matrix
 	static float fTotalTime = 0.0f;
 	static float stroidTime = 0.0f;
-	float fLapDifference = m_pSystem->StopClock();
+	float fLapDifference = m_pSystem->LapClock();
 	fTotalTime += fLapDifference;
 	fRunTime += fLapDifference;
 	stroidTime += fLapDifference;
@@ -51,19 +53,19 @@ void ApplicationClass::Update (void)
 
 	
 	vector3 pigPos = shipObject->GetCentroidGlobal();
-	pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
+	//pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
 
 	// Pig translate matrixes
 	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
-	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
-	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 5, vector3(0.0f, 0.0f, 1.0f));
+	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
+	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
 	
 	// Pig combined translate matrix
 	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
 	
 	// Set Pig Model Matrix
 	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
-	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Pig");
+	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Shield");
 	
 	//First person camera movement
 	if(m_bFPC == true)
@@ -92,7 +94,7 @@ void ApplicationClass::Update (void)
 		asteroids.push_back(Asteroid(pos, speed, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
 		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
 
 		//Reset timer
@@ -110,6 +112,7 @@ void ApplicationClass::Update (void)
 		*/
 		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
 		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
+		tempBO->SetVisibleAABB(true);
 		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 
 		/*
@@ -138,28 +141,14 @@ void ApplicationClass::Update (void)
 
 		switch(shipHealth){
 		case 2:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Inverse");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MEYELLOW);
 			break;
 		case 1:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "GrayScale");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MERED);
 			break;
 		case 0:
-			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "Color");
+			m_pMeshMngr->SetShaderProgramByName(m_sShipObject, "MonoChrome", MEBLACK);
 			break;
-		}
-
-		// Make asteroid blink right after colliding
-		// TODO: Rework
-		if(asteroids[nAsteroid].colliding){
-			if((int)asteroids[nAsteroid].life_time % 2 == 0){
-				m_pMeshMngr->SetShaderProgramByName(tempName, "Inverse");
-			}
-			else{
-				m_pMeshMngr->SetShaderProgramByName(tempName);
-			}
-		}
-		else{
-			m_pMeshMngr->SetShaderProgramByName(tempName);
 		}
 
 		/*
@@ -167,7 +156,7 @@ void ApplicationClass::Update (void)
 			Checks for collision with current asteroid
 			Resets asteroids values to "create a new asteroid"
 		*/
-		if(shieldObject->IsColliding(*tempBO))
+		if(shieldObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding)
 		{
 			color = MEBLACK;
 
@@ -180,6 +169,20 @@ void ApplicationClass::Update (void)
 			asteroids[nAsteroid].go_right = direction;
 
 			randomY = rand() % (int)(height) + (int)(-half_height);
+		}
+
+		// Make asteroid blink right after colliding
+		// TODO: Rework
+		if(asteroids[nAsteroid].colliding){
+			if((int)asteroids[nAsteroid].life_time % 2 == 0){
+				m_pMeshMngr->SetShaderProgramByName(tempName, "MonoChrome", MEBLACK);
+			}
+			else{
+				m_pMeshMngr->SetShaderProgramByName(tempName);
+			}
+		}
+		else{
+			m_pMeshMngr->SetShaderProgramByName(tempName);
 		}
 		
 		/*
@@ -202,46 +205,7 @@ void ApplicationClass::Update (void)
 	}
 
 	// Jared's shit
-	 OctDectection();
-
-	
-	////Top-Right corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside top right
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Top-Left corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside top left
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), (half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Bottom-Right corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside bottom right
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3((half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), color, WIRE);*/
-
-	////Bottom-Left corner
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/4, -height/4,-2.5))* glm::scale(vector3(width/2, height/2, 5)), color, WIRE);
-	////Cubes inside bottom left
-	///*m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -height/8,-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-width/8, -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height-(half_height/4)),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(-(half_width -(half_width/4)), -(half_height/4),-2.5))* glm::scale(vector3(width/4, height/4, 10)), MERED, WIRE);*/
-	
-
+	OctDectection();
 
 	printf("FPS: %d\r", m_pSystem->FPS);//print the Frames per Second	
 }
@@ -299,13 +263,13 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	subdivision1.z = (boxSize.z/4);
 
 	vector3 subdivision2;
-	subdivision2.x = (m_v3Centroid.x + boxSize.x/8);
-	subdivision2.y = (m_v3Centroid.y + boxSize.y/8);
-	subdivision2.z = (boxSize.z/8);
+	subdivision2.x = boxSize.x/8;
+	subdivision2.y = boxSize.y/8;
+	subdivision2.z = boxSize.z/8;
 
 
 	//Giving cubes boudning boxes
-	m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
+	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
 	BoundingObjectClass* box1 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box2 = new BoundingObjectClass(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box3 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
@@ -329,7 +293,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
 		//Second subdivision
-		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(subdivision2.x, subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
 
 
 	//Top-Left corner
@@ -340,7 +304,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
 		//Second subdivision
-		//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(subdivision2.x, subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
 
 	//Bottom-Right corner
 	if(b3Color)
@@ -358,7 +322,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 
 	//Getting ship object
-	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Steve");
+	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Ship");
 	
 	//Checking if ship and asteroid are in the same area in the octTree
 	for(int i = 0; i < 4; i++)

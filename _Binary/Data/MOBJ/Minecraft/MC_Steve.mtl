@@ -1,7 +1,73 @@
-newmtl MC_Steve_SG
+newmtl blinn1SG
+illum 4
+Kd 0.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.50 0.50 0.50
+newmtl initialShadingGroup
+illum 4
+Kd 1.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl lambert3SG
+illum 4
+Kd 0.40 0.40 0.40
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl lambert4SG
+illum 4
+Kd 1.00 1.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl lambert5SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd DefSteve1024.png
+Ni 1.00
+newmtl pasted__lambert2SG
+illum 4
+Kd 1.00 0.72 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__lambert3SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__lambert4SG
+illum 4
+Kd 1.00 1.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__lambert5SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__pasted__lambert3SG1
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__pasted__lambert3SG2
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+newmtl pasted__pasted__pasted__lambert3SG1
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
 Ni 1.00

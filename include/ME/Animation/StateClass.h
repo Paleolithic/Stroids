@@ -16,6 +16,7 @@ class MyEngineDLL StateClass
 	
 	bool m_bTransitionState;//Is this a transition state
 	bool m_bRepeatSequence;	//Does the sequence repeats
+	bool m_bBreakableState;//Can I break out of this state without finishing the animation?
 	int m_nSequence;		//Sequence being played
 	int m_nExits;			//Number of exits of this state
 	
@@ -39,6 +40,9 @@ public:
 	void SetSequence(int a_nSequence);
 	int GetSequence(void);
 	__declspec(property(put = SetSequence, get = GetSequence)) int Sequence;
+
+	void SetBreakable(bool a_bRepeatSequence);
+	bool GetBreakable(void);
 
 	void SetRepeatSequence(bool a_bRepeatSequence);
 	bool GetRepeatSequence(void);

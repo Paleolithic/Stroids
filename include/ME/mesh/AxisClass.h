@@ -83,7 +83,7 @@ public:
 		Args:
 			a_v3Color -> determinate the color of the box to be rendered, if MEDEFAULT
 			it will render the shape in the constructed color (white) */
-	void Render( bool bForceDraw = false );
+	void AddToRenderList( bool bForceDraw = false );
 
 private:
 	/* Released Memory and objects allocated. */

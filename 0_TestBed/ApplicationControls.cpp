@@ -238,7 +238,7 @@ void ApplicationClass::ProcessJoystick(void)
 			fAngleY -= fDelta/10000.0f;
 		}
 
-		m_pCamera->Rotate(fAngleX, fAngleY);
+		//m_pCamera->Rotate(fAngleX, fAngleY);
 		m_pCamera->CalculateView();
 		
 	}
@@ -285,7 +285,7 @@ void ApplicationClass::CameraRotation(float a_fSpeed)
 		DeltaMouse = static_cast<float>(MouseY - CenterY);
 		fAngleX += DeltaMouse * a_fSpeed;
 	}
-	m_pCamera->Rotate(fAngleX, fAngleY);
+	//m_pCamera->Rotate(fAngleX, fAngleY);
 }
 void ApplicationClass::ArcBall(float a_fSensitivity)
 {

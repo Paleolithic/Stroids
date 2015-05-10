@@ -8,6 +8,8 @@ uniform vec3 LightPosition_W;
 uniform vec3 AmbientColor;
 uniform float AmbientPower;
 
+uniform vec3 Tint;
+
 uniform vec3 LightColor;
 uniform float LightPower;
 
@@ -46,6 +48,10 @@ bool ComputeDiffuseAndAmbient()
 	{
 		MaterialDiffuseColor = vec4(Color, 1);
 	}
+
+    if(Tint.x != -1 && Tint.y != -1 && Tint.z != -1)
+        MaterialDiffuseColor = MaterialDiffuseColor * vec4(Tint, 1);
+
 	MaterialAmbientColor = vec4(AmbientColor, 1) * MaterialDiffuseColor * AmbientPower;
 	return true;
 }
