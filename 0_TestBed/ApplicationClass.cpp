@@ -27,10 +27,10 @@ void ApplicationClass::InitAppSystem(void)
 	// Delete the .cfg file for the following changes take effect
 
 	// Color of the screen
-	m_v4ClearColor = vector4(0.4f, 0.6f, 0.9f, 0.0f); // Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
+	m_v4ClearColor = vector4(0.0f, 0.0f, 0.0f, 0.0f); // Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 		
 	// Indicate window properties
-	m_pSystem->WindowName = "Octree";
+	m_pSystem->WindowName = "'ST'ROIDS! Use WASD to move, and Q or E to deflect the asteroids. Three hits and you're done for!";
 	m_pSystem->WindowWidth = 1280;
 	m_pSystem->WindowHeight = 720;
 	m_pSystem->WindowFullscreen = false;
@@ -81,6 +81,12 @@ ApplicationClass::ApplicationClass()
 
 	// Ship health variable
 	shipHealth = 3;
+
+
+	is_left = false;
+	is_up = true;
+	is_right = false;
+	is_down = false;
 
 	// Width and height variable inits
 	width = 22.5f;
@@ -222,7 +228,7 @@ void ApplicationClass::ReadConfig(void)
 			float fValueY;
 			float fValueZ;
 			sscanf_s(reader.m_sLine.c_str(), "Ambient: [%f,%f,%f]", &fValueX, &fValueY, &fValueZ);
-			m_pLightMngr->SetColor(vector3(fValueX, fValueY, fValueZ), 0);
+			m_pLightMngr->SetColor(vector3(0.5f, 0.5f, 0.5f), 0);
 		}
 		else if(sWord == "Background:")
 		{
@@ -231,7 +237,8 @@ void ApplicationClass::ReadConfig(void)
 			float fValueZ;
 			float fValueW;
 			sscanf_s(reader.m_sLine.c_str(), "Background: [%f,%f,%f,%f]", &fValueX, &fValueY, &fValueZ, &fValueW);
-			m_v4ClearColor = vector4(fValueX, fValueY, fValueZ, fValueW);
+			//m_v4ClearColor = vector4(fValueX, fValueY, fValueZ, fValueW);
+			m_v4ClearColor = vector4(0.1f, 0.001f, 0.001f, fValueW);
 		}
 		else if(sWord == "AmbientPower:")
 		{

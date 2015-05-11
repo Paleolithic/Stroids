@@ -4,7 +4,7 @@ void ApplicationClass::InitUserAppVariables()
 {
 	m_pCamera->SetPosition(vector3(0.0f, 0.0f, 15.0f));
 
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Ship.obj", "Ship");
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Ship_Shrunk.obj", "Ship", glm::rotate(matrix4(IDENTITY), -90.0f, vector3(1.0f, 0.0f, 0.0f)));
 	m_sShipObject = "Ship";
 	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
 	
@@ -66,6 +66,7 @@ void ApplicationClass::Update (void)
 	// Set Pig Model Matrix
 	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
 	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Shield");
+
 	
 	//First person camera movement
 	if(m_bFPC == true)
@@ -118,9 +119,7 @@ void ApplicationClass::Update (void)
 
 		/*
 			Logic to handle asteroid map value for screen movement
-			Add to current asteroids lifetime value based on fLapDifference
-			If current asteroids lifetime is greater than screen length, reset lifetime and allow for it to collide again
-			Then map current asteroids screen percent to its lifetime
+			Add to current asteroids lifetime value to its lifetime
 		*/
 		asteroids[nAsteroid].life_time += fLapDifference;
 		if(asteroids[nAsteroid].GetLT() > asteroids[nAsteroid].speed)
@@ -128,17 +127,29 @@ void ApplicationClass::Update (void)
 			asteroids[nAsteroid].life_time = 0.0f; //Resets run time
 			asteroids[nAsteroid].colliding = false;
 		}
-		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
-
+		
 		/*
 			Logic to handle ship collision with asteroid
 			Checks for collision with current asteroid
 			Updates color based on ship's health
+
+			Also updates life time and direction to make asteroid go in opposite direction
 		*/
 		if(shipObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding){
 			asteroids[nAsteroid].colliding = true;
 			shipHealth--;
+
+			asteroids[nAsteroid].life_time = asteroids[nAsteroid].speed - asteroids[nAsteroid].life_time; 
+
+			if(asteroids[nAsteroid].go_right){
+				asteroids[nAsteroid].go_right = false;
+			} else{
+				asteroids[nAsteroid].go_right = true;
+			}
 		}
+
+		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
+
 
 		switch(shipHealth){
 		case 2:
@@ -200,7 +211,7 @@ void ApplicationClass::Update (void)
 		}
 		v3Lerp.y = randomY;
 		v3Lerp.z = 0.0f;
-		
+
 		// Send the mesh manager the current asteroids lerp vector position
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
 	}
