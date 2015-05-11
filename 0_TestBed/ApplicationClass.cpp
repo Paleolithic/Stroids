@@ -82,6 +82,12 @@ ApplicationClass::ApplicationClass()
 	// Ship health variable
 	shipHealth = 3;
 
+
+	is_left = false;
+	is_up = true;
+	is_right = false;
+	is_down = false;
+
 	// Width and height variable inits
 	width = 22.5f;
 	height = width / 1.8f;

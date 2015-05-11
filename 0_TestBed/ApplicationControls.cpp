@@ -62,33 +62,97 @@ void ApplicationClass::ProcessKeyboard(void)
 	//Model Positioning
 #pragma region Model Positioning
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
+	{		
+		degreeDir = 0;
 		if(bModifier)
-			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f, 1.0f));
-		else
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, -1.0f, 0.0f));
+		else{
 			m_m4ShipObject = glm::translate(matrix4(), vector3(-fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
+			is_left = true;
+			 if(is_up){
+				degreeDir = 270;
+				is_up = false;
+			}
+			else if(is_right){
+				degreeDir = 180;
+				is_right = false;
+			}
+			else if(is_down){
+				degreeDir = 90;
+				is_down = false;
+			}
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, degreeDir, vector3(0.0f, 1.0f, 0.0f));
+		}	
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
+		degreeDir = 0.0f;
 		if(bModifier)
-			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 0.0f,-1.0f));
-		else
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, 1.0f, vector3(0.0f, 1.0f,0.0f));
+		else{
 			m_m4ShipObject = glm::translate(matrix4(), vector3( fSpeed, 0.0f, 0.0f)) * m_m4ShipObject;
+			is_right = true;
+			if(is_down){
+				degreeDir = 270;
+				is_down = false;
+			}
+			else if(is_left){
+				degreeDir = 180;
+				is_left = false;
+			}
+			else if(is_up){
+				degreeDir = 90;
+				is_up = false;
+			}
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, degreeDir, vector3(0.0f, 1.0f, 0.0f));
+		}
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
+		degreeDir = 0.0f;
 		if(bModifier)
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f, fSpeed - 1.0f)) * m_m4ShipObject;
-		else
+		else{
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, fSpeed, 0.0f)) * m_m4ShipObject;
+			is_up = true;
+			if(is_right){
+				degreeDir = 270;
+				is_right = false;
+			}
+			else if(is_down){
+				degreeDir = 180;
+				is_down = false;
+			}
+			else if(is_left){
+				degreeDir = 90;
+				is_left = false;
+			}
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, degreeDir, vector3(0.0f, 1.0f, 0.0f));
+		}
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
+		degreeDir = 0.0f;
 		if(bModifier)
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f, 0.0f,-fSpeed + 1.0f)) * m_m4ShipObject;
 			
-		else
+		else{
 			m_m4ShipObject = glm::translate(matrix4(), vector3(0.0f,-fSpeed, 0.0f)) * m_m4ShipObject;
+			is_down = true;
+			 if(is_left){
+				degreeDir = 270;
+				is_left = false;
+			}
+			else if(is_up){
+				degreeDir = 180;
+				is_up = false;
+			}
+			else if(is_right){
+				degreeDir = 90;
+				is_right = false;
+			}
+			m_m4ShipObject = glm::rotate(m_m4ShipObject, degreeDir, vector3(0.0f, 1.0f, 0.0f));
+		}
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 		//Go Counter-clockwise
@@ -98,6 +162,7 @@ void ApplicationClass::ProcessKeyboard(void)
 		//Go Clockwise
 		degreeSpin--;
 	}
+
 #pragma endregion
 	////ModelSelection
 	//if(sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
