@@ -95,7 +95,7 @@ void ApplicationClass::Update (void)
 		asteroids.push_back(Asteroid(pos, speed, scale, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f))));
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
 		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
 
 		//Reset timer
@@ -218,11 +218,16 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	vector3 m_v3Centroid = vector3(0,0,0);
 	vector3 v3Max = vector3(0,0,0);
 	vector3 v3Min = vector3(0,0,0);
-
 	vector3 boxSize = vector3(0,0,0);
+
+	//Setting variables for halfwidths
 	float halfWidthX;
 	float halfWidthY;
 	float halfWidthZ;
+
+	//Vector (list) to hold all objects that are in the same subdivision as the ship
+	std::vector<BoundingObjectClass*> asteroids; 
+	bool firstTime = true;
 
 	for(int model = 0; model < numModels; model++){
 		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
@@ -257,107 +262,403 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 	//Creating first subdivision
 	vector3 subdivision1;
-	subdivision1.x = (m_v3Centroid.x + boxSize.x/4);
-	subdivision1.y = (m_v3Centroid.y + boxSize.y/4);
-	subdivision1.z = (boxSize.z/4);
+	subdivision1.x = boxSize.x/4;
+	subdivision1.y = boxSize.y/4;
+	subdivision1.z = boxSize.z/4;
 
+	//Creating first subdivision
 	vector3 subdivision2;
 	subdivision2.x = boxSize.x/8;
 	subdivision2.y = boxSize.y/8;
 	subdivision2.z = boxSize.z/8;
-
-
-	//Giving cubes boudning boxes
-	//m_m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
-	BoundingObjectClass* box1 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
-	BoundingObjectClass* box2 = new BoundingObjectClass(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
-	BoundingObjectClass* box3 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
-	BoundingObjectClass* box4 = new BoundingObjectClass(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
-
-	//Add cubes to a vector
-	std::vector<BoundingObjectClass*> bBoxes;
-	bBoxes.push_back(box1);
-	bBoxes.push_back(box2);
-	bBoxes.push_back(box3);
-	bBoxes.push_back(box4);
 
 	//Whole cube
 	m_pMeshMngr->AddCubeToQueue(glm::translate(m_v3Centroid) * glm::scale(boxSize), MERED, WIRE);
 
 	//Top Right
 	if(b1Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MEBLACK, WIRE);
+		//Second subdivision
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+	}
 	else if(!b1Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
 		//Second subdivision
-		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		/*if(inTopRight)
+		{
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		}*/
+
+	}
 
 
 	//Top-Left corner
 	if(b2Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MEBLACK, WIRE);
+		
+		//Second subdivision
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+
+	}
 	else if(!b2Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
 		//Second subdivision
-		//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		/*if(inTopLeft)
+		{
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		}*/
+	}
+
 
 	//Bottom-Right corner
 	if(b3Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MEBLACK, WIRE);
+	
+		//Second subdivision
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+	
+	}
 	else if(!b3Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
+		//Second subdivision
+		/*if(inBottomRight)
+		{
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		}*/
+		
+	}
+
+
 	//Bottom-Left corner
 	if(b4Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MEBLACK, WIRE);
+		
+		//Second subdivision
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+	
+	}
 	else if(!b4Color)
+	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
+		//Second subdivision
+		/*if(inBottomLeft)
+		{
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		}*/
+	}
 
 	//Getting ship object
 	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Ship");
-	
-	//Checking if ship and asteroid are in the same area in the octTree
-	for(int i = 0; i < 4; i++)
+
+	if(glm::distance(m_v3Centroid.x + subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
 	{
-		if(shipObject->IsColliding(*bBoxes[i]))
+		for(int model = 0; model < numModels; model++)
 		{
-			//If it is num i box then change color
-			if(i == 0)
+			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = true;
 				b2Color = false;
 				b3Color = false;
 				b4Color = false;
+				collideTest1 = true;
+				collideTest2 = false;
+				collideTest3 = false;
+				collideTest4 = false;
+
+
+				//If its the first time checking this subsection clear asteroid vector
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+
+				/*if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}*/
 			}
-			else if(i == 1)
+			else
 			{
-				b2Color = true;
-				b1Color = false;
-				b3Color = false;
-				b4Color = false;
-			}
-			else if(i == 2)
-			{
-				b3Color = true;
-				b1Color = false;
-				b2Color = false;
-				b4Color = false;
-			}
-			else if(i == 3)
-			{
-				b4Color = true;
-				b1Color = false;
-				b2Color = false;
-				b3Color = false;
+				if(collideTest1)
+				{
+					b1Color = true;
+				}
+				else
+				{
+					b1Color = false;
+				}
 			}
 		}
+	}
+	else if(glm::distance(m_v3Centroid.x - subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
+	{
+		for(int model = 0; model < numModels; model++)
+		{
+			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			{
+				b1Color = false;
+				b2Color = true;
+				b3Color = false;
+				b4Color = false;
+				collideTest1 = false;
+				collideTest2 = true;
+				collideTest3 = false;
+				collideTest4 = false;
+
+
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				/*if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}*/
+			}
+			else
+			{
+				if(collideTest2)
+				{
+					b2Color = true;
+				}
+				else
+				{
+					b2Color = false;
+				}
+			}
+		}
+	}
+	else if(glm::distance(m_v3Centroid.x + subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
+	{
+		for(int model = 0; model < numModels; model++)
+		{
+			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			{
+				b1Color = false;
+				b2Color = false;
+				b3Color = true;
+				b4Color = false;
+				collideTest1 = false;
+				collideTest2 = false;
+				collideTest3 = true;
+				collideTest4 = false;
+				
+
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				/*if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}*/
+			}
+			else
+			{
+				if(collideTest3)
+				{
+					b3Color = true;
+				}
+				else
+				{
+					b3Color = false;
+				}
+			}
+		}
+	}
+	else if(glm::distance(m_v3Centroid.x - subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
+	{
+		for(int model = 0; model < numModels; model++)
+		{
+			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			{
+				b1Color = false;
+				b2Color = false;
+				b3Color = false;
+				b4Color = true;
+				collideTest1 = false;
+				collideTest2 = false;
+				collideTest3 = false;
+				collideTest4 = true;
+
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				/*if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}*/
+			}
+			else
+			{
+				if(collideTest4 = true)
+				{
+					b4Color = true;
+				}
+				else
+				{
+					b4Color = false;
+				}
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+	for(int model = 0; model < numModels; model++)
+	{
+		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+
+		//Checking collision with ship
+		/*if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
+				b1Color = true;
+				b2Color = false;
+				b3Color = false;
+				b4Color = false;
+				//If its the first time checking this subsection clear asteroid vector
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+
+				if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}
+		}
+		else if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
+				b1Color = false;
+				b2Color = true;
+				b3Color = false;
+				b4Color = false;
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}
+		}
+		else if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
+				b1Color = false;
+				b2Color = false;
+				b3Color = true;
+				b4Color = false;
+
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}
+		}
+		else if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
+				b1Color = false;
+				b2Color = false;
+				b3Color = false;
+				b4Color = true;
+
+				if(firstTime)
+				{
+					asteroids.clear();
+					firstTime = false;
+				}
+				if(bs != "ship" || bs != "shield")
+				{
+					asteroids.push_back(bo);
+				}
+		}*/
+
 	}
 
 }
