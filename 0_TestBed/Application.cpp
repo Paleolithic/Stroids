@@ -301,15 +301,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
-		//Second subdivision
-		/*if(inTopRight)
-		{
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-		}*/
-
 	}
 
 
@@ -330,14 +321,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
-		//Second subdivision
-		/*if(inTopLeft)
-		{
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y + subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-		}*/
 	}
 
 
@@ -357,15 +340,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
-
-		//Second subdivision
-		/*if(inBottomRight)
-		{
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-		}*/
 		
 	}
 
@@ -387,14 +361,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
-		//Second subdivision
-		/*if(inBottomLeft)
-		{
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-		}*/
 	}
 
 	//Getting ship object
@@ -409,8 +375,8 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+				glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+				glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = true;
 				b2Color = false;
@@ -429,10 +395,11 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 					firstTime = false;
 				}
 
-				/*if(bs != "ship" || bs != "shield")
+				if(bo->Getname() != "Ship" || bo->Getname() != "Shield")
 				{
 					asteroids.push_back(bo);
-				}*/
+					
+				}
 			}
 			else
 			{
@@ -455,7 +422,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		{
 			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
-			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
 			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
@@ -501,7 +468,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = false;
@@ -545,8 +512,8 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		{
 			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
-			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = false;
@@ -582,6 +549,11 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		}
 	}
 
+	for(int i = 0; i < asteroids.size(); i++)
+	{
+
+		std::cout << asteroids[i]->Getname() << std::endl;
+	}
 
 
 
@@ -590,14 +562,13 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 
 
 
-
-	for(int model = 0; model < numModels; model++)
+	/*for(int model = 0; model < numModels; model++)
 	{
 		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 
 		//Checking collision with ship
-		/*if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+		if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
 			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
 				b1Color = true;
@@ -668,9 +639,9 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 				{
 					asteroids.push_back(bo);
 				}
-		}*/
+		}
 
-	}
+	}*/
 
 }
 
