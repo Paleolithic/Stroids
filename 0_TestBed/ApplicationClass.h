@@ -37,6 +37,13 @@ class ApplicationClass
 	int numAsteroids;
 	int maxAsteroids; 
 
+	// Ship spin amoutn
+	float degreeDir;
+	bool is_left;
+	bool is_right;
+	bool is_up;
+	bool is_down;
+
 	// Shield spin amount
 	float degreeSpin;
 

@@ -4,7 +4,7 @@ void ApplicationClass::InitUserAppVariables()
 {
 	m_pCamera->SetPosition(vector3(0.0f, 0.0f, 15.0f));
 
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Ship.obj", "Ship");
+	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Ship_Shrunk.obj", "Ship", glm::rotate(matrix4(IDENTITY), -90.0f, vector3(1.0f, 0.0f, 0.0f)));
 	m_sShipObject = "Ship";
 	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
 	
@@ -66,6 +66,7 @@ void ApplicationClass::Update (void)
 	// Set Pig Model Matrix
 	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
 	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Shield");
+
 	
 	//First person camera movement
 	if(m_bFPC == true)
@@ -91,7 +92,8 @@ void ApplicationClass::Update (void)
 
 		float speed = rand() % 5 + 3;
 		float direction = rand() % 2;
-		asteroids.push_back(Asteroid(pos, speed, direction));
+		float scale = rand() % 5 + 3;
+		asteroids.push_back(Asteroid(pos, speed, scale, direction));
 	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
 		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
@@ -117,9 +119,7 @@ void ApplicationClass::Update (void)
 
 		/*
 			Logic to handle asteroid map value for screen movement
-			Add to current asteroids lifetime value based on fLapDifference
-			If current asteroids lifetime is greater than screen length, reset lifetime and allow for it to collide again
-			Then map current asteroids screen percent to its lifetime
+			Add to current asteroids lifetime value to its lifetime
 		*/
 		asteroids[nAsteroid].life_time += fLapDifference;
 		if(asteroids[nAsteroid].GetLT() > asteroids[nAsteroid].speed)
@@ -127,17 +127,29 @@ void ApplicationClass::Update (void)
 			asteroids[nAsteroid].life_time = 0.0f; //Resets run time
 			asteroids[nAsteroid].colliding = false;
 		}
-		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
-
+		
 		/*
 			Logic to handle ship collision with asteroid
 			Checks for collision with current asteroid
 			Updates color based on ship's health
+
+			Also updates life time and direction to make asteroid go in opposite direction
 		*/
 		if(shipObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding){
 			asteroids[nAsteroid].colliding = true;
 			shipHealth--;
+
+			asteroids[nAsteroid].life_time = asteroids[nAsteroid].speed - asteroids[nAsteroid].life_time; 
+
+			if(asteroids[nAsteroid].go_right){
+				asteroids[nAsteroid].go_right = false;
+			} else{
+				asteroids[nAsteroid].go_right = true;
+			}
 		}
+
+		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
+
 
 		switch(shipHealth){
 		case 2:
@@ -199,7 +211,7 @@ void ApplicationClass::Update (void)
 		}
 		v3Lerp.y = randomY;
 		v3Lerp.z = 0.0f;
-		
+
 		// Send the mesh manager the current asteroids lerp vector position
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
 	}
@@ -211,10 +223,8 @@ void ApplicationClass::Update (void)
 }
 
 void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
-{
-	MeshManagerSingleton* pMeshMngr = MeshManagerSingleton::GetInstance();
-		
-	int numModels = pMeshMngr->GetNumberOfModels();
+{		
+	int numModels = m_pMeshMngr->GetNumberOfInstances();
 
 	vector3 m_v3Centroid = vector3(0,0,0);
 	vector3 v3Max = vector3(0,0,0);
@@ -226,8 +236,8 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	float halfWidthZ;
 
 	for(int model = 0; model < numModels; model++){
-		String bs = pMeshMngr->GetNameOfInstanceByIndex(model);
-		BoundingObjectClass* bo = pMeshMngr->GetBoundingObject(bs);
+		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
+		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 
 		if(v3Min.x > bo->GetCentroidGlobal().x)
 			v3Min.x = bo->GetCentroidGlobal().x;
@@ -256,9 +266,20 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	boxSize.y = glm::distance(vector3(0.0f, v3Min.y, 0.0f), vector3(0.0f, v3Max.y, 0.0f));
 	boxSize.z = glm::distance(vector3(0.0f, 0.0f, v3Min.z), vector3(0.0f, 0.0f, v3Max.z));
 
+	//Creating first subdivision
+	vector3 subdivision1;
+	subdivision1.x = (m_v3Centroid.x + boxSize.x/4);
+	subdivision1.y = (m_v3Centroid.y + boxSize.y/4);
+	subdivision1.z = (boxSize.z/4);
+
+	vector3 subdivision2;
+	subdivision2.x = boxSize.x/8;
+	subdivision2.y = boxSize.y/8;
+	subdivision2.z = boxSize.z/8;
+
 
 	//Giving cubes boudning boxes
-	//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
+	//m_m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(2)), MERED, WIRE);
 	BoundingObjectClass* box1 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box2 = new BoundingObjectClass(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
 	BoundingObjectClass* box3 = new BoundingObjectClass(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y - boxSize.y/4, boxSize.z - (boxSize.z/4)),2);
@@ -281,12 +302,19 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 
+		//Second subdivision
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+
+
 	//Top-Left corner
 	if(b2Color)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MEBLACK, WIRE);
 	else if(!b2Color)
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
+
+		//Second subdivision
+		//m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.x + subdivision2.y, subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
 
 	//Bottom-Right corner
 	if(b3Color)
@@ -340,9 +368,7 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 				b2Color = false;
 				b3Color = false;
 			}
-
 		}
-
 	}
 
 }
