@@ -40,9 +40,8 @@ void ApplicationClass::Update (void)
 	stroidTime += fLapDifference;
 
 	if(fTotalTime >= 60.0f){
-		maxAsteroids = 10;
+		maxAsteroids = 16;
 	}
-
 	
 	vector3 shipPos = shipObject->GetCentroidGlobal();
 
@@ -106,6 +105,34 @@ void ApplicationClass::Update (void)
 		}
 		asteroids[nAsteroid]->screen_percentage = MapValue(asteroids[nAsteroid]->life_time, 0.0f, asteroids[nAsteroid]->speed, 0.0f, 1.0f);
 
+		float friction = 0.02f;
+		if(asteroids[nAsteroid]->isSlowed){
+			vector3 currentPos = asteroids[nAsteroid]->aBO->GetCentroidGlobal();
+			currentPos = currentPos * friction;
+
+			if(shieldObject->GetCentroidGlobal().y <= asteroids[nAsteroid]->aBO->GetCentroidGlobal().y){
+				asteroids[nAsteroid]->rand_Y += 0.25f;
+			}
+			else{
+				asteroids[nAsteroid]->rand_Y -= 0.25f;
+			}
+
+			if(asteroids[nAsteroid]->rand_Y >= height/2 || asteroids[nAsteroid]->rand_Y <= -height/2)
+			{
+				asteroids[nAsteroid]->life_time = 0.0f;
+				asteroids[nAsteroid]->screen_percentage = 0.0f;
+
+				float speed = rand() % 5 + 3;
+				float direction = rand() % 2;
+				asteroids[nAsteroid]->speed = speed;
+				asteroids[nAsteroid]->go_right = direction;
+				asteroids[nAsteroid]->rand_Y = rand() % (int)(height) + (int)(-half_height);
+				asteroids[nAsteroid]->isSlowed = false;
+				asteroids[nAsteroid]->life_time = 0.0f; //Resets run time
+				asteroids[nAsteroid]->colliding = false;
+			}
+		}
+
 		/*
 			Create vector3 variable which will be set to the translation coordinates of the asteroid model
 			Map the vector3 variables x component to the screen percentage
@@ -121,16 +148,11 @@ void ApplicationClass::Update (void)
 		v3Lerp.y = asteroids[nAsteroid]->rand_Y;
 		v3Lerp.z = 0.0f;
 
-		// Send the mesh manager the current asteroids lerp vector position
 		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
 	}
 
-
-
 	//For each near asteroid
 	for(int nAsteroid = 0; nAsteroid < nearAsteroids.size(); nAsteroid++){
-		
-		
 		/*
 			Initialization for this loops variables
 		*/
@@ -144,10 +166,9 @@ void ApplicationClass::Update (void)
 
 			Also updates life time and direction to make asteroid go in opposite direction
 		*/
-		if(shipObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding){
+		if(shieldObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding){
 			nearAsteroids[nAsteroid]->colliding = true;
-			shipHealth--;
-
+			nearAsteroids[nAsteroid]->isSlowed  = true;
 			nearAsteroids[nAsteroid]->life_time = nearAsteroids[nAsteroid]->speed - nearAsteroids[nAsteroid]->life_time; 
 
 			if(nearAsteroids[nAsteroid]->go_right){
@@ -174,18 +195,17 @@ void ApplicationClass::Update (void)
 			Checks for collision with current asteroid
 			Resets nearAsteroids values to "create a new asteroid"
 		*/
-		if(shieldObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding)
+		if(shipObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding)
 		{
 			color = MEBLACK;
-
+			shipHealth--;
 			nearAsteroids[nAsteroid]->life_time = 0.0f;
 			nearAsteroids[nAsteroid]->screen_percentage = 0.0f;
-
+			
 			float speed = rand() % 5 + 3;
 			float direction = rand() % 2;
 			nearAsteroids[nAsteroid]->speed = speed;
 			nearAsteroids[nAsteroid]->go_right = direction;
-
 			nearAsteroids[nAsteroid]->rand_Y = rand() % (int)(height) + (int)(-half_height);
 		}
 
@@ -194,6 +214,7 @@ void ApplicationClass::Update (void)
 		if(nearAsteroids[nAsteroid]->colliding){
 			if((int)nearAsteroids[nAsteroid]->life_time % 2 == 0){
 				m_pMeshMngr->SetShaderProgramByName(tempName, "MonoChrome", MEBLACK);
+				
 			}
 			else{
 				m_pMeshMngr->SetShaderProgramByName(tempName);

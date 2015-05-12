@@ -71,7 +71,7 @@ ApplicationClass::ApplicationClass()
 	m_pLightMngr = nullptr;
 
 	// Num asteroids init
-	maxAsteroids = 5;
+	maxAsteroids = 8;
 
 	// Shield degree spin init
 	degreeSpin = 0;

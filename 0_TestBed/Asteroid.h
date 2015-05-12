@@ -21,11 +21,13 @@ public:
 	float screen_percentage;
 	float speed;
 	String name;
+
 	bool go_right;
 	float rand_Y;
 	BoundingObjectClass* aBO;
 	bool colliding;
 	bool isNearShip;
+	bool isSlowed;
 
 	//Nah man fuck that, just access them directly like a boss
 	void SetLT(float lt);

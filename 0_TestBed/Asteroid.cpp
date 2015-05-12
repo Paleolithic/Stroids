@@ -11,9 +11,10 @@ Asteroid::Asteroid(void)
 	aBO = nullptr;
 	colliding = false;
 	isNearShip = false;
+	isSlowed = false;
 }
 
-Asteroid::Asteroid(float spd, String nm, bool right, BoundingObjectClass* bo)
+Asteroid::Asteroid(float spd, String nm, bool right,BoundingObjectClass* bo)
 {
 	life_time = 0.0f;
 	screen_percentage = 0.0f;
@@ -21,9 +22,11 @@ Asteroid::Asteroid(float spd, String nm, bool right, BoundingObjectClass* bo)
 	rand_Y = 0.0f;
 	name = nm;
 	go_right = right;
+	rand_Y = 0.0f;
 	aBO = bo;
 	colliding = false;
 	isNearShip = false;
+	isSlowed = false;
 }
 
 Asteroid::Asteroid(const Asteroid& otherAst)
@@ -31,7 +34,7 @@ Asteroid::Asteroid(const Asteroid& otherAst)
 	life_time			= otherAst.life_time;
 	screen_percentage	= otherAst.screen_percentage;
 	speed				= otherAst.speed;
-	rand_Y				= otherAst.rand_Y;
+	rand_Y				= otherAst.rand_Y; 
 	name				= otherAst.name;
 	go_right			= otherAst.go_right;
 	aBO					= otherAst.aBO;
