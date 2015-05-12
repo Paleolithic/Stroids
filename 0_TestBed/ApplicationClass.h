@@ -34,7 +34,6 @@ class ApplicationClass
 	int shipHealth;
 
 	// Number of asteroids
-	int numAsteroids;
 	int maxAsteroids; 
 
 	// Ship spin amoutn
@@ -59,10 +58,6 @@ class ApplicationClass
 	bool b2Color;
 	bool b3Color;
 	bool b4Color;
-	bool collideTest1;
-	bool collideTest2;
-	bool collideTest3;
-	bool collideTest4;
 
 	//Bools for checking if in sections
 	bool inTopRight;
@@ -70,9 +65,9 @@ class ApplicationClass
 	bool inBottomRight;
 	bool inBottomLeft;
 
-	// Asteroid array
-	BoundingObjectClass* m_pAsteroids;
-	std::vector<Asteroid> asteroids;
+	// Total number of asteroids
+	std::vector<Asteroid*> asteroids;
+	std::vector<Asteroid*> nearAsteroids;
 
 	//Standard variables
 	static ApplicationClass* m_pInstance; // Singleton for this class

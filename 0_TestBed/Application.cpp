@@ -6,25 +6,17 @@ void ApplicationClass::InitUserAppVariables()
 
 	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Ship_Shrunk.obj", "Ship", glm::rotate(matrix4(IDENTITY), -90.0f, vector3(1.0f, 0.0f, 0.0f)));
 	m_sShipObject = "Ship";
-	//vector4 stevePos = static_cast<vector4>(m_pMeshMngr->GetModelMatrix("Steve"));
-	
-	//= m_pMeshMngr->GetInstanceByName("Steve");
+
 	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Shield_updated.obj", "Shield");
 	m_sShieldObject = "Shield";
-	bool clockwise = true;
 
 	srand (time(NULL));	 
 
-	// Steve and Pig Bounding Object Classes
+	// Ship and Shield Bounding Object Classes
 	shipObject = m_pMeshMngr->GetBoundingObject("Ship");
 	shipObject->SetVisibleAABB(true);
 	shieldObject = m_pMeshMngr->GetBoundingObject("Shield");
 	shieldObject->SetVisibleAABB(true);
-
-	/*float xPos = rand() % (int)(width) + (int)(-width);
-	float yPos = rand() % (int)(height) + (int)(-height/2);
-	numAsteroids++;
-	m_pMeshMngr->LoadModelUnthreaded("Minecraft\\MC_Creeper.obj", "Creeper" + numAsteroids, glm::translate(vector3(xPos, yPos, 0.0f)));*/
 }
 
 void ApplicationClass::Update (void)
@@ -52,52 +44,41 @@ void ApplicationClass::Update (void)
 	}
 
 	
-	vector3 pigPos = shipObject->GetCentroidGlobal();
-	//pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
+	vector3 shipPos = shipObject->GetCentroidGlobal();
 
-	// Pig translate matrixes
-	matrix4 sTranslate = glm::translate(vector3(2.0f, 2.0f, 0.0f));
+	// Shield translate matrixes
+	matrix4 sTranslate = glm::translate(vector3(1.15f, 1.15f, 0.0f));
 	matrix4 sRotate = glm::rotate(matrix4(IDENTITY), degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
 	matrix4 sOrbit = glm::rotate(matrix4(IDENTITY), -degreeSpin * 2, vector3(0.0f, 0.0f, 1.0f));
 	
-	// Pig combined translate matrix
-	matrix4 m_m4Pig = sRotate * sTranslate * sOrbit * glm::translate(pigPos);
+	// Shield combined translate matrix
+	matrix4 m_m4Shield = sRotate * sTranslate * sOrbit * glm::translate(shipPos);
 	
-	// Set Pig Model Matrix
+	// Set Shield Model Matrix
 	m_pMeshMngr->SetModelMatrix(m_m4ShipObject, m_sShipObject);
-	m_pMeshMngr->SetModelMatrix(m_m4Pig, "Shield");
+	m_pMeshMngr->SetModelMatrix(m_m4Shield, "Shield");
 
 	
 	//First person camera movement
 	if(m_bFPC == true)
 		CameraRotation();
 
-	if(m_bArcBall == true)
-	{ 
-		//ArcBall();
-	}
-
 	// CATHY SHIT
 	// Do the following every two seconds as long as number of asteroids is less than max
-	if(stroidTime > 2.0f && numAsteroids < maxAsteroids)
+	if(stroidTime > 2.0f && asteroids.size() < maxAsteroids)
 	{
 		
 		//Set initial random x and y position for asteroids
 		float xPos = rand() % (int)(width) + (int)(-width);
 		float yPos = rand() % (int)(height) + (int)(-half_height);
 		vector3 pos = vector3(xPos, yPos, 0.0f);
-
-		//Add to number of asteroids
-		numAsteroids++;
-
+		
 		float speed = rand() % 5 + 3;
+		String name = "Asteroid" + std::to_string(asteroids.size());
 		float direction = rand() % 2;
-		float scale = rand() % 5 + 3;
-		asteroids.push_back(Asteroid(pos, speed, scale, direction));
-	
 		//Add new asteroid to the screen and add a lifetime float and screen percent float to the arrays
-		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", "Asteroid" + std::to_string(asteroids.size()), glm::translate(vector3(xPos, yPos, 0.0f)));
-		//std::cout << "Creeper" + std::to_string(asteroids.size()) << std::endl;
+		m_pMeshMngr->LoadModelUnthreaded("Minecraft\\Asteroid.obj", name, glm::translate(vector3(xPos, yPos, 0.0f)));
+		asteroids.push_back(new Asteroid(speed, name, direction, m_pMeshMngr->GetBoundingObject(name)));
 
 		//Reset timer
 		stroidTime = 0.0f;
@@ -107,26 +88,54 @@ void ApplicationClass::Update (void)
 	vector3 color = MERED;
 	float ScreenLength = 1.0f;
 
-	//For each asteroid
-	for(int nAsteroid = 0; nAsteroid < numAsteroids; nAsteroid++){
-		/*
-			Initialization for this loops variables
-		*/
-		String tempName = m_pMeshMngr->GetNameOfInstanceByIndex(nAsteroid+2);
-		BoundingObjectClass* tempBO = m_pMeshMngr->GetBoundingObject(tempName);
+	// For each asteroid
+	for(int nAsteroid = 0; nAsteroid < asteroids.size(); nAsteroid++){
+		String tempName = asteroids[nAsteroid]->name;
+		BoundingObjectClass* tempBO = asteroids[nAsteroid]->aBO;
 		tempBO->SetVisibleAABB(true);
-		float randomY = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
-
+		asteroids[nAsteroid]->rand_Y = tempBO->GetCentroidGlobal().y - tempBO->GetCentroidLocal().y;
 		/*
 			Logic to handle asteroid map value for screen movement
 			Add to current asteroids lifetime value to its lifetime
 		*/
-		asteroids[nAsteroid].life_time += fLapDifference;
-		if(asteroids[nAsteroid].GetLT() > asteroids[nAsteroid].speed)
+		asteroids[nAsteroid]->life_time += fLapDifference;
+		if(asteroids[nAsteroid]->GetLT() > asteroids[nAsteroid]->speed)
 		{
-			asteroids[nAsteroid].life_time = 0.0f; //Resets run time
-			asteroids[nAsteroid].colliding = false;
+			asteroids[nAsteroid]->life_time = 0.0f; //Resets run time
+			asteroids[nAsteroid]->colliding = false;
 		}
+		asteroids[nAsteroid]->screen_percentage = MapValue(asteroids[nAsteroid]->life_time, 0.0f, asteroids[nAsteroid]->speed, 0.0f, 1.0f);
+
+		/*
+			Create vector3 variable which will be set to the translation coordinates of the asteroid model
+			Map the vector3 variables x component to the screen percentage
+			Make x component go from left to right or right to left depending on the asteroids direction boolean
+			Set y component to randomY, which is the the asteroids y value, either already set or reset due to prior collision
+		*/
+		vector3 v3Lerp;
+		if(asteroids[nAsteroid]->go_right){
+			v3Lerp.x = MapValue(asteroids[nAsteroid]->screen_percentage, 0.0f, 1.0f, -half_width, half_width);
+		} else{
+			v3Lerp.x = MapValue(asteroids[nAsteroid]->screen_percentage, 0.0f, 1.0f, half_width, -half_width);
+		}
+		v3Lerp.y = asteroids[nAsteroid]->rand_Y;
+		v3Lerp.z = 0.0f;
+
+		// Send the mesh manager the current asteroids lerp vector position
+		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
+	}
+
+
+
+	//For each near asteroid
+	for(int nAsteroid = 0; nAsteroid < nearAsteroids.size(); nAsteroid++){
+		
+		
+		/*
+			Initialization for this loops variables
+		*/
+		String tempName = nearAsteroids[nAsteroid]->name;
+		BoundingObjectClass* tempBO = nearAsteroids[nAsteroid]->aBO;
 		
 		/*
 			Logic to handle ship collision with asteroid
@@ -135,21 +144,18 @@ void ApplicationClass::Update (void)
 
 			Also updates life time and direction to make asteroid go in opposite direction
 		*/
-		if(shipObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding){
-			asteroids[nAsteroid].colliding = true;
+		if(shipObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding){
+			nearAsteroids[nAsteroid]->colliding = true;
 			shipHealth--;
 
-			asteroids[nAsteroid].life_time = asteroids[nAsteroid].speed - asteroids[nAsteroid].life_time; 
+			nearAsteroids[nAsteroid]->life_time = nearAsteroids[nAsteroid]->speed - nearAsteroids[nAsteroid]->life_time; 
 
-			if(asteroids[nAsteroid].go_right){
-				asteroids[nAsteroid].go_right = false;
+			if(nearAsteroids[nAsteroid]->go_right){
+				nearAsteroids[nAsteroid]->go_right = false;
 			} else{
-				asteroids[nAsteroid].go_right = true;
+				nearAsteroids[nAsteroid]->go_right = true;
 			}
 		}
-
-		asteroids[nAsteroid].screen_percentage = MapValue(asteroids[nAsteroid].life_time, 0.0f, asteroids[nAsteroid].speed, 0.0f, 1.0f);
-
 
 		switch(shipHealth){
 		case 2:
@@ -166,27 +172,27 @@ void ApplicationClass::Update (void)
 		/*
 			Logic to handle shield collision with asteroid
 			Checks for collision with current asteroid
-			Resets asteroids values to "create a new asteroid"
+			Resets nearAsteroids values to "create a new asteroid"
 		*/
-		if(shieldObject->IsColliding(*tempBO) && !asteroids[nAsteroid].colliding)
+		if(shieldObject->IsColliding(*tempBO) && !nearAsteroids[nAsteroid]->colliding)
 		{
 			color = MEBLACK;
 
-			asteroids[nAsteroid].life_time = 0.0f;
-			asteroids[nAsteroid].screen_percentage = 0.0f;
+			nearAsteroids[nAsteroid]->life_time = 0.0f;
+			nearAsteroids[nAsteroid]->screen_percentage = 0.0f;
 
 			float speed = rand() % 5 + 3;
 			float direction = rand() % 2;
-			asteroids[nAsteroid].speed = speed;
-			asteroids[nAsteroid].go_right = direction;
+			nearAsteroids[nAsteroid]->speed = speed;
+			nearAsteroids[nAsteroid]->go_right = direction;
 
-			randomY = rand() % (int)(height) + (int)(-half_height);
+			nearAsteroids[nAsteroid]->rand_Y = rand() % (int)(height) + (int)(-half_height);
 		}
 
 		// Make asteroid blink right after colliding
 		// TODO: Rework
-		if(asteroids[nAsteroid].colliding){
-			if((int)asteroids[nAsteroid].life_time % 2 == 0){
+		if(nearAsteroids[nAsteroid]->colliding){
+			if((int)nearAsteroids[nAsteroid]->life_time % 2 == 0){
 				m_pMeshMngr->SetShaderProgramByName(tempName, "MonoChrome", MEBLACK);
 			}
 			else{
@@ -196,24 +202,6 @@ void ApplicationClass::Update (void)
 		else{
 			m_pMeshMngr->SetShaderProgramByName(tempName);
 		}
-		
-		/*
-			Create vector3 variable which will be set to the translation coordinates of the asteroid model
-			Map the vector3 variables x component to the screen percentage
-			Make x component go from left to right or right to left depending on the asteroids direction boolean
-			Set y component to randomY, which is the the asteroids y value, either already set or reset due to prior collision
-		*/
-		vector3 v3Lerp;
-		if(asteroids[nAsteroid].go_right){
-			v3Lerp.x = MapValue(asteroids[nAsteroid].screen_percentage, 0.0f, 1.0f, -half_width, half_width);
-		} else{
-			v3Lerp.x = MapValue(asteroids[nAsteroid].screen_percentage, 0.0f, 1.0f, half_width, -half_width);
-		}
-		v3Lerp.y = randomY;
-		v3Lerp.z = 0.0f;
-
-		// Send the mesh manager the current asteroids lerp vector position
-		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
 	}
 
 	// Jared's shit
@@ -224,49 +212,42 @@ void ApplicationClass::Update (void)
 
 void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 {		
-	int numModels = m_pMeshMngr->GetNumberOfInstances();
-
+	// Setting up vector3 variables for octree box
 	vector3 m_v3Centroid = vector3(0,0,0);
 	vector3 v3Max = vector3(0,0,0);
 	vector3 v3Min = vector3(0,0,0);
 	vector3 boxSize = vector3(0,0,0);
 
-	//Setting variables for halfwidths
-	float halfWidthX;
-	float halfWidthY;
-	float halfWidthZ;
-
-	//Vector (list) to hold all objects that are in the same subdivision as the ship
-	std::vector<BoundingObjectClass*> asteroids; 
+	// First time boolean
 	bool firstTime = true;
 
+	int numModels = m_pMeshMngr->GetNumberOfInstances();
+	// For each bounding object check to see if its min or max
 	for(int model = 0; model < numModels; model++){
 		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
 		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
 
-		if(v3Min.x > bo->GetCentroidGlobal().x)
-			v3Min.x = bo->GetCentroidGlobal().x;
-		else if(v3Max.x < bo->GetCentroidGlobal().x)
-			v3Max.x = bo->GetCentroidGlobal().x;
+		if(v3Min.x > bo->GetCentroidGlobal().x - bo->GetHalfWidth().x)
+			v3Min.x = bo->GetCentroidGlobal().x - bo->GetHalfWidth().x;
+		else if(v3Max.x < bo->GetCentroidGlobal().x + bo->GetHalfWidth().x)
+			v3Max.x = bo->GetCentroidGlobal().x + bo->GetHalfWidth().x;
 			
-		if(v3Min.y > bo->GetCentroidGlobal().y)
-			v3Min.y = bo->GetCentroidGlobal().y;
-		else if(v3Max.y < bo->GetCentroidGlobal().y)
-			v3Max.y = bo->GetCentroidGlobal().y;
+		if(v3Min.y > bo->GetCentroidGlobal().y - bo->GetHalfWidth().y)
+			v3Min.y = bo->GetCentroidGlobal().y - bo->GetHalfWidth().y;
+		else if(v3Max.y < bo->GetCentroidGlobal().y + bo->GetHalfWidth().y)
+			v3Max.y = bo->GetCentroidGlobal().y + bo->GetHalfWidth().y;
 
-		if(v3Min.z > bo->GetCentroidGlobal().z)
-			v3Min.z = bo->GetCentroidGlobal().z;
-		else if(v3Max.z < bo->GetCentroidGlobal().z)
-			v3Max.z = bo->GetCentroidGlobal().z;
+		if(v3Min.z > bo->GetCentroidGlobal().z - bo->GetHalfWidth().z)
+			v3Min.z = bo->GetCentroidGlobal().z - bo->GetHalfWidth().z;
+		else if(v3Max.z < bo->GetCentroidGlobal().z + bo->GetHalfWidth().z)
+			v3Max.z = bo->GetCentroidGlobal().z + bo->GetHalfWidth().z;
 
-		halfWidthX = bo->HalfWidth.x;
-		halfWidthY = bo->HalfWidth.y;
-		halfWidthZ = bo->HalfWidth.z;
-
+		
 	}
-
+	// Get centroid
 	m_v3Centroid = (v3Min + v3Max) / 2.0f;
 
+	// The size of the box
 	boxSize.x = glm::distance(vector3(v3Min.x, 0.0f, 0.0f), vector3(v3Max.x, 0.0f, 0.0f));
 	boxSize.y = glm::distance(vector3(0.0f, v3Min.y, 0.0f), vector3(0.0f, v3Max.y, 0.0f));
 	boxSize.z = glm::distance(vector3(0.0f, 0.0f, v3Min.z), vector3(0.0f, 0.0f, v3Max.z));
@@ -283,9 +264,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	subdivision2.y = boxSize.y/8;
 	subdivision2.z = boxSize.z/8;
 
-	//Whole cube
-	m_pMeshMngr->AddCubeToQueue(glm::translate(m_v3Centroid) * glm::scale(boxSize), MERED, WIRE);
-
 	//Top Right
 	if(b1Color)
 	{
@@ -300,7 +278,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x + boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
-
 	}
 
 
@@ -320,7 +297,6 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	{
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z - (boxSize.z/4))) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - boxSize.x/4, m_v3Centroid.y + boxSize.y/4, boxSize.z/4)) * glm::scale(vector3(boxSize.x/2, boxSize.y/2, boxSize.z/2)), MERED, WIRE);
-
 	}
 
 
@@ -351,9 +327,9 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 		
 		//Second subdivision
 		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
-			m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - subdivision2.x, m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - (subdivision2.y*4 - subdivision2.y), boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
+		m_pMeshMngr->AddCubeToQueue(glm::translate(vector3(m_v3Centroid.x - (subdivision2.x*4 - subdivision2.x), m_v3Centroid.y - subdivision2.y, boxSize.z - subdivision2.z)) * glm::scale(vector3(boxSize.x/4, boxSize.y/4, boxSize.z/4)), MERED, WIRE);
 	
 	}
 	else if(!b4Color)
@@ -364,284 +340,170 @@ void ApplicationClass::OctDectection(/*BoundingObjectClass* dude*/)
 	}
 
 	//Getting ship object
-	BoundingObjectClass* shipObject = m_pMeshMngr->GetBoundingObject("Ship");
+	shipObject = m_pMeshMngr->GetBoundingObject("Ship");
 
+	
+	// Checking collision with subdivision1 and ship in top right corner
 	if(glm::distance(m_v3Centroid.x + subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
+	   glm::distance(m_v3Centroid.y + subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+	   glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
 	{
-		for(int model = 0; model < numModels; model++)
+		// For each asteroid, check to see if in subdivision
+		for(int nAsteroid = 0; nAsteroid < asteroids.size(); nAsteroid++)
 		{
-			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
-			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			BoundingObjectClass* bo = asteroids[nAsteroid]->aBO;
+
+			// If in subdivision and ship is there, create subdivision 2 and add appropriate asteroid to BoundingObject array
 			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-				glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-				glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			   glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			   glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = true;
 				b2Color = false;
 				b3Color = false;
 				b4Color = false;
-				collideTest1 = true;
-				collideTest2 = false;
-				collideTest3 = false;
-				collideTest4 = false;
-
+				asteroids[nAsteroid]->isNearShip = true;
 
 				//If its the first time checking this subsection clear asteroid vector
 				if(firstTime)
 				{
-					asteroids.clear();
+					nearAsteroids.clear();
 					firstTime = false;
 				}
-
-				if(bo->Getname() != "Ship" || bo->Getname() != "Shield")
-				{
-					asteroids.push_back(bo);
-					
-				}
+		
+				nearAsteroids.push_back(asteroids[nAsteroid]);
 			}
-			else
-			{
-				if(collideTest1)
-				{
-					b1Color = true;
-				}
-				else
-				{
-					b1Color = false;
-				}
+			else{
+				asteroids[nAsteroid]->isNearShip = false;
 			}
 		}
 	}
+	// Checking collision with subdivision1 and ship in top left corner
 	else if(glm::distance(m_v3Centroid.x - subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
 			glm::distance(m_v3Centroid.y + subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
 	{
-		for(int model = 0; model < numModels; model++)
+		// For each asteroid, check to see if in subdivision
+		for(int nAsteroid = 0; nAsteroid < asteroids.size(); nAsteroid++)
 		{
-			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
-			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
+			BoundingObjectClass* bo = asteroids[nAsteroid]->aBO;
+
+			// If in subdivision and ship is there, create subdivision 2 and add appropriate asteroid to BoundingObject array
 			if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			   glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			   glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
 				b1Color = false;
 				b2Color = true;
 				b3Color = false;
-				b4Color = false;
-				collideTest1 = false;
-				collideTest2 = true;
-				collideTest3 = false;
-				collideTest4 = false;
-
-
-				if(firstTime)
-				{
-					asteroids.clear();
-					firstTime = false;
-				}
-				/*if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}*/
-			}
-			else
-			{
-				if(collideTest2)
-				{
-					b2Color = true;
-				}
-				else
-				{
-					b2Color = false;
-				}
-			}
-		}
-	}
-	else if(glm::distance(m_v3Centroid.x + subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y - subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
-	{
-		for(int model = 0; model < numModels; model++)
-		{
-			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
-			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
-			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
-			{
-				b1Color = false;
-				b2Color = false;
-				b3Color = true;
-				b4Color = false;
-				collideTest1 = false;
-				collideTest2 = false;
-				collideTest3 = true;
-				collideTest4 = false;
+				b4Color = false;				
+				asteroids[nAsteroid]->isNearShip = true;
 				
 
 				if(firstTime)
 				{
-					asteroids.clear();
+					nearAsteroids.clear();
 					firstTime = false;
 				}
-				/*if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}*/
+
+				nearAsteroids.push_back(asteroids[nAsteroid]);
 			}
-			else
-			{
-				if(collideTest3)
-				{
-					b3Color = true;
-				}
-				else
-				{
-					b3Color = false;
-				}
+			else{
+				asteroids[nAsteroid]->isNearShip = false;
 			}
 		}
 	}
-	else if(glm::distance(m_v3Centroid.x - subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+	// Checking collision with subdivision1 and ship in bottom right corner
+	else if(glm::distance(m_v3Centroid.x + subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
 			glm::distance(m_v3Centroid.y - subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
 			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
 	{
-		for(int model = 0; model < numModels; model++)
+		// For each asteroid, check to see if in subdivision
+		for(int nAsteroid = 0; nAsteroid < asteroids.size(); nAsteroid++)
 		{
-			String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
-			BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
-			if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			BoundingObjectClass* bo = asteroids[nAsteroid]->aBO;
+			
+			// If in subdivision and ship is there, create subdivision 2 and add appropriate asteroid to BoundingObject array
+			if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			   glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			   glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
 			{
-				b1Color = false;
-				b2Color = false;
-				b3Color = false;
-				b4Color = true;
-				collideTest1 = false;
-				collideTest2 = false;
-				collideTest3 = false;
-				collideTest4 = true;
-
-				if(firstTime)
-				{
-					asteroids.clear();
-					firstTime = false;
-				}
-				/*if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}*/
-			}
-			else
-			{
-				if(collideTest4 = true)
-				{
-					b4Color = true;
-				}
-				else
-				{
-					b4Color = false;
-				}
-			}
-		}
-	}
-
-	for(int i = 0; i < asteroids.size(); i++)
-	{
-
-		std::cout << asteroids[i]->Getname() << std::endl;
-	}
-
-
-
-
-
-
-
-
-	/*for(int model = 0; model < numModels; model++)
-	{
-		String bs = m_pMeshMngr->GetNameOfInstanceByIndex(model);
-		BoundingObjectClass* bo = m_pMeshMngr->GetBoundingObject(bs);
-
-		//Checking collision with ship
-		if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
-				b1Color = true;
-				b2Color = false;
-				b3Color = false;
-				b4Color = false;
-				//If its the first time checking this subsection clear asteroid vector
-				if(firstTime)
-				{
-					asteroids.clear();
-					firstTime = false;
-				}
-
-				if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}
-		}
-		else if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y + subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
-				b1Color = false;
-				b2Color = true;
-				b3Color = false;
-				b4Color = false;
-				if(firstTime)
-				{
-					asteroids.clear();
-					firstTime = false;
-				}
-				if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}
-		}
-		else if(glm::distance(m_v3Centroid.x + subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
 				b1Color = false;
 				b2Color = false;
 				b3Color = true;
 				b4Color = false;
+				asteroids[nAsteroid]->isNearShip = true;
 
 				if(firstTime)
 				{
-					asteroids.clear();
+					nearAsteroids.clear();
 					firstTime = false;
 				}
-				if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}
+
+				nearAsteroids.push_back(asteroids[nAsteroid]);
+			}
+			else{
+				asteroids[nAsteroid]->isNearShip = false;
+			}
 		}
-		else if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
-			glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
-			glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z)){
+	}
+	// Checking collision with subdivision1 and ship in bottom left corner
+	else if(glm::distance(m_v3Centroid.x - subdivision1.x, shipObject->CentroidGlobal.x) < (subdivision1.x + shipObject->HalfWidth.x)  &&
+			glm::distance(m_v3Centroid.y - subdivision1.y, shipObject->CentroidGlobal.y) < (subdivision1.y + shipObject->HalfWidth.y) &&
+			glm::distance(m_v3Centroid.z + subdivision1.z, shipObject->CentroidGlobal.z) < (subdivision1.z + shipObject->HalfWidth.z))
+	{
+		// For each asteroid, check to see if in subdivision
+		for(int nAsteroid = 0; nAsteroid < asteroids.size(); nAsteroid++)
+		{
+			BoundingObjectClass* bo = asteroids[nAsteroid]->aBO;
+			
+			// If in subdivision and ship is there, create subdivision 2 and add appropriate asteroid to BoundingObject array
+			if(glm::distance(m_v3Centroid.x - subdivision1.x, bo->CentroidGlobal.x) < (subdivision1.x + bo->HalfWidth.x)  &&
+			   glm::distance(m_v3Centroid.y - subdivision1.y, bo->CentroidGlobal.y) < (subdivision1.y + bo->HalfWidth.y) &&
+			   glm::distance(m_v3Centroid.z + subdivision1.z, bo->CentroidGlobal.z) < (subdivision1.z + bo->HalfWidth.z))
+			{
 				b1Color = false;
 				b2Color = false;
 				b3Color = false;
 				b4Color = true;
+				asteroids[nAsteroid]->isNearShip = true;
 
 				if(firstTime)
 				{
-					asteroids.clear();
+					nearAsteroids.clear();
 					firstTime = false;
 				}
-				if(bs != "ship" || bs != "shield")
-				{
-					asteroids.push_back(bo);
-				}
+
+				nearAsteroids.push_back(asteroids[nAsteroid]);
+			}
+			else{
+				asteroids[nAsteroid]->isNearShip = false;
+			}
 		}
+	}
 
-	}*/
+	//Count for checking if ship has left subdivision
+	int count = 0;
+	//Loop to check all asteroids to see if any are near the ship
+	for(int i = 0; i < asteroids.size(); i++)
+	{
+		//If the asteroid is not near the ship add to count
+		if(!asteroids[i]->isNearShip)
+		{
+			count++;
+		}
+		//If the count is the same as the amount of asteroids on the screen then reset because none are near
+		if(count == asteroids.size())
+		{
+			b1Color = false;
+			b2Color = false;
+			b3Color = false;
+			b4Color = false;
 
+			nearAsteroids.clear();
+		}
+	}
+
+	std::cout << nearAsteroids.size() << std::endl;
 }
 

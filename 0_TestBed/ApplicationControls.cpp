@@ -351,6 +351,8 @@ void ApplicationClass::CameraRotation(float a_fSpeed)
 		fAngleX += DeltaMouse * a_fSpeed;
 	}
 	//m_pCamera->Rotate(fAngleX, fAngleY);
+	m_pCamera->ChangeHeading(fAngleY * 3.0f);//fAngleY and fAngleX are no longer static, the value is saved inside of the camera object
+	m_pCamera->ChangePitch(-fAngleX * 3.0f);
 }
 void ApplicationClass::ArcBall(float a_fSensitivity)
 {

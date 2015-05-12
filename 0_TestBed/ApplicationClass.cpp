@@ -69,11 +69,8 @@ ApplicationClass::ApplicationClass()
 	m_pWindow = nullptr;
 	m_pGLSystem = nullptr;
 	m_pLightMngr = nullptr;
-	m_pAsteroids = nullptr;
-
 
 	// Num asteroids init
-	numAsteroids = 0;
 	maxAsteroids = 5;
 
 	// Shield degree spin init
@@ -82,6 +79,10 @@ ApplicationClass::ApplicationClass()
 	// Ship health variable
 	shipHealth = 3;
 
+	b1Color = false;
+	b2Color = false;
+	b3Color = false;
+	b4Color = false;
 
 	is_left = false;
 	is_up = true;
@@ -237,8 +238,8 @@ void ApplicationClass::ReadConfig(void)
 			float fValueZ;
 			float fValueW;
 			sscanf_s(reader.m_sLine.c_str(), "Background: [%f,%f,%f,%f]", &fValueX, &fValueY, &fValueZ, &fValueW);
-			//m_v4ClearColor = vector4(fValueX, fValueY, fValueZ, fValueW);
-			m_v4ClearColor = vector4(0.1f, 0.001f, 0.001f, fValueW);
+			m_v4ClearColor = vector4(fValueX, fValueY, fValueZ, fValueW);
+			//m_v4ClearColor = vector4(0.1f, 0.001f, 0.001f, fValueW);
 		}
 		else if(sWord == "AmbientPower:")
 		{
