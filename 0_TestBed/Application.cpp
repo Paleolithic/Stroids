@@ -50,7 +50,6 @@ void ApplicationClass::Update (void)
 	if(fTotalTime >= 60.0f){
 		maxAsteroids = 10;
 	}
-
 	
 	vector3 pigPos = shipObject->GetCentroidGlobal();
 	//pigPos.y = pigPos.y - shipObject->GetHalfWidth().y;
@@ -188,6 +187,7 @@ void ApplicationClass::Update (void)
 		if(asteroids[nAsteroid].colliding){
 			if((int)asteroids[nAsteroid].life_time % 2 == 0){
 				m_pMeshMngr->SetShaderProgramByName(tempName, "MonoChrome", MEBLACK);
+				
 			}
 			else{
 				m_pMeshMngr->SetShaderProgramByName(tempName);
@@ -212,8 +212,40 @@ void ApplicationClass::Update (void)
 		v3Lerp.y = randomY;
 		v3Lerp.z = 0.0f;
 
+		float friction = 0.02f;
+		//vector3 currentPos = tempBO->GetCentroidGlobal();
 		// Send the mesh manager the current asteroids lerp vector position
-		m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
+		if(asteroids[nAsteroid].colliding && asteroids[nAsteroid].isSlowed == false)
+		{
+			vector3 currentPos = tempBO->GetCentroidGlobal();
+			currentPos = currentPos * friction;
+			v3Lerp = v3Lerp + currentPos;
+			m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
+			std::cout << currentPos.y << ", " << height << std::endl;
+			if(v3Lerp.y >= height/2 || v3Lerp.y <= -height/2)
+			{
+				/*float xPos = rand() % (int)(width) + (int)(-width);
+				float yPos = rand() % (int)(height) + (int)(-half_height);
+				currentPos = vector3(xPos, yPos, 0);
+				v3Lerp = v3Lerp - currentPos;*/
+				asteroids[nAsteroid].life_time = 0.0f;
+				asteroids[nAsteroid].screen_percentage = 0.0f;
+
+				float speed = rand() % 5 + 3;
+				float direction = rand() % 2;
+				asteroids[nAsteroid].speed = speed;
+				asteroids[nAsteroid].go_right = direction;
+
+				randomY = rand() % (int)(height) + (int)(-half_height);
+				//currentPos = vector3(0,0,0);
+				//v3Lerp = vector3(0,0,0);
+				asteroids[nAsteroid].isSlowed = true;
+			}
+		}
+		else
+		{
+			m_pMeshMngr->SetModelMatrix(glm::translate(v3Lerp), tempName);
+		}
 	}
 
 	// Jared's shit

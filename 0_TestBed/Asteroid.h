@@ -20,9 +20,11 @@ public:
 	float screen_percentage;
 	float speed;
 	float scale;
+
 	bool go_right;
 	
 	bool colliding;
+	bool isSlowed;
 
 	//Nah man fuck that, just access them directly like a boss
 	void SetLT(float lt);

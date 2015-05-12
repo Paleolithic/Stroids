@@ -9,6 +9,7 @@ Asteroid::Asteroid(void)
 	scale = 1.0f;
 	go_right = true;
 	colliding = false;
+	isSlowed = false;
 }
 
 Asteroid::Asteroid(vector3 position, float spd, float scl, bool right)
@@ -20,6 +21,7 @@ Asteroid::Asteroid(vector3 position, float spd, float scl, bool right)
 	scale = scl;
 	go_right = right;
 	colliding = false;
+	isSlowed = false;
 }
 
 
